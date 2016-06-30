@@ -9,6 +9,10 @@ cc.Class({
         this.canvas = cc.find('Canvas').getComponent('HelloWorld');
         this.terminals = cc.find('Canvas/terminals');
         this.sysPanel = cc.find('Canvas/sysPanel');
+        this.lb = cc.find('Canvas/terminals/lineBoost');
+        this.fw = cc.find('Canvas/terminals/fireWall');
+        this.vc = cc.find('Canvas/terminals/virusChecker');
+        this.nf = cc.find('Canvas/terminals/404');
     },
 
     onLineBoost: function(){

@@ -1,0 +1,57 @@
+{
+  "__type__": "cc.AnimationClip",
+  "_name": "speedup",
+  "_objFlags": 0,
+  "_rawFiles": null,
+  "_duration": 0.3333333333333333,
+  "sample": 60,
+  "speed": 0.3,
+  "wrapMode": 2,
+  "curveData": {
+    "props": {
+      "opacity": [
+        {
+          "frame": 0,
+          "value": 255
+        },
+        {
+          "frame": 0.16666666666666666,
+          "value": 56
+        },
+        {
+          "frame": 0.3333333333333333,
+          "value": 255
+        }
+      ],
+      "scaleX": [
+        {
+          "frame": 0,
+          "value": 1
+        },
+        {
+          "frame": 0.16666666666666666,
+          "value": 1.05
+        },
+        {
+          "frame": 0.3333333333333333,
+          "value": 1
+        }
+      ],
+      "scaleY": [
+        {
+          "frame": 0,
+          "value": 1
+        },
+        {
+          "frame": 0.16666666666666666,
+          "value": 1.05
+        },
+        {
+          "frame": 0.3333333333333333,
+          "value": 1
+        }
+      ]
+    }
+  },
+  "events": []
+}

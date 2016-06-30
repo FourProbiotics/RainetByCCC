@@ -38,7 +38,8 @@ cc.Class({
 
     // 隐藏对象
     // @obj: 将隐藏的对象
-    hide: function(obj){
+    hide: function(){
+        var obj = this.node;
         if(!obj.active)
             return false;
         var act1=cc.fadeOut(0.15);
@@ -48,5 +49,21 @@ cc.Class({
         var seq = cc.sequence(act1, callback);
         obj.runAction(seq);
         return true;
+    },
+
+    onCloseYes: function(){
+
+    },
+
+    onCloseNo: function(){
+        this.hide();
+    },
+
+    onSwitchYes: function(){
+
+    },
+
+    onSwitchNo: function(){
+
     }
 });

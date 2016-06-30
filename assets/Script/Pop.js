@@ -15,16 +15,22 @@ cc.Class({
 
     // 按不同模式显示弹窗
     show: function(type){
+        this.popYes.targetOff(this);
+        this.popNo.targetOff(this);
         switch(type){
             case 'close':
                 this.label.string = '确定认输并退出游戏吗？';
                 this.yesLabel.string = '确定';
                 this.noLabel.string = '取消';
+                this.popYes.on(cc.Node.EventType.TOUCH_END, this.onCloseYes, this);
+                this.popNo.on(cc.Node.EventType.TOUCH_END, this.onCloseNo, this);
             break;
             case 'switch':
-                this.label.string = '是否交换两枚棋子？';
+                this.label.string = '是否交换选定棋子？';
                 this.yesLabel.string = '交换';
                 this.noLabel.string = '不交换';
+                this.popYes.on(cc.Node.EventType.TOUCH_END, this.onSwitchYes, this);
+                this.popNo.on(cc.Node.EventType.TOUCH_END, this.onSwitchNo, this);
             break;
         }
         var node = this.node;
@@ -52,7 +58,7 @@ cc.Class({
     },
 
     onCloseYes: function(){
-
+        cc.director.end();
     },
 
     onCloseNo: function(){
@@ -60,10 +66,10 @@ cc.Class({
     },
 
     onSwitchYes: function(){
-
+        this.hide();
     },
 
     onSwitchNo: function(){
-
+        this.hide();
     }
 });

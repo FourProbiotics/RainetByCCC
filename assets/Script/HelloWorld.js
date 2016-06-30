@@ -55,7 +55,6 @@ cc.Class({
                 }
             );
         }
-        this.showPop('switch');
     },
 
     // 改变期盼样式。不同阵营有不同的棋盘样式

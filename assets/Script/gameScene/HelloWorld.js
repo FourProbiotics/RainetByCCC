@@ -107,6 +107,13 @@ cc.Class({
         this.tips.string = str;
     },
 
+    // 设置房间号
+    // @num: 房间号
+    setRoom: function(num){
+        var label = cc.find('room', this.stateBar).getComponent(cc.Label);
+        label.string = num;
+    },
+
     // 设置玩家名
     // @myName: 己方玩家名
     // @enemyName: 对方玩家名

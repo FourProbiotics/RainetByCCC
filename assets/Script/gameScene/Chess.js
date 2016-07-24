@@ -59,11 +59,13 @@ var Chess = cc.Class({
                 posx = 159.3 + 80*(x - 3);
             posy = -328;
         }else if(y = -1){
-            posx = 0;
-            posy = -1000;
+            this.node.setLocalZOrder(1);
+            posx = -313 + 70*x;
+            posy = 380;
         }else if(y = 10){
-            posx = 0;
-            posy =  1000;
+            this.node.setLocalZOrder(1);
+            posx = -313 + 70*x;
+            posy =  -385;
         }else{
             posx = -313 + 70*x;
             posy = 315 - 70*y;

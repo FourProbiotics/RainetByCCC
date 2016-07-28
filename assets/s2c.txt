@@ -1,0 +1,39 @@
+11登录反馈 test:bool, username:string[, error]
+12注册反馈 test:bool, username: string[, error]
+13创建房间反馈 test:bool, room:int[, error]
+14匹配反馈 test:bool, room:int, name, score, e_name, e_score[, map][, error]
+//15进入房间反馈 test:bool, room:int, name, score, e_name, e_score
+//16参观反馈  test:bool, room:int, name, score, e_name, e_score, terminal, e_terminal, map
+
+
+21游戏开始
+23回合开始
+24回合结束
+
+31超速回线反馈
+33操作结束
+
+41防火墙反馈
+43操作结束
+
+51探查反馈
+53操作结束
+
+61交换反馈
+63操作结束
+
+71选择反馈
+73操作结束
+
+81玩家信息
+91游戏结束
+
+发送格式：{code:, data:{}, to: username}
+账号信息：
+username
+password
+email
+score
+login
+loginDate
+lastLogin

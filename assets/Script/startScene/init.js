@@ -19,7 +19,6 @@ cc.Class({
         // cc.sys.localStorage.setItem('username', 'FouProBiotics');
         // cc.sys.localStorage.setItem('salt', salt);
         // cc.sys.localStorage.setItem('password', pass);
-
         let username = cc.sys.localStorage.getItem('username');
         let password = cc.sys.localStorage.getItem('password');
 
@@ -61,7 +60,7 @@ cc.Class({
 
         setTimeout(function () {
             if (ws.readyState === WebSocket.OPEN) {
-                ws.send("Hello WebSocket, I'm a text message.");
+                cc.log("WebSocket ready");
             }
             else {
                 console.log("WebSocket instance wasn't ready...");

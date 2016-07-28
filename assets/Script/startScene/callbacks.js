@@ -1,3 +1,7 @@
+var sha1 = require('sha1');
+var Rson = require('Rson');
+
+var callbacks;
 cc.Class({
     extends: cc.Component,
 
@@ -6,7 +10,7 @@ cc.Class({
 
     // use this for initialization
     onLoad: function () {
-        this.sha1 = require('sha1');
+        callbacks = this;
         // 操作面板
         this.operatorLayer = cc.find('Canvas/operator');
         this.waitingPanel = cc.find('Canvas/waitingPanel');
@@ -48,21 +52,21 @@ cc.Class({
     },
 
     onWSMsg: function(event){
-        var data = JSON.parse(event.data);
+        var data = Rson.decode(event.data);
         var msg = data.data;
-        console.log("serversend: code: " + data.code + ' data: ' + msg + ' to: ' + data.to);
+        var self = callbacks;
+        cc.log("serversend: code: " + data.code + ' data: ' + msg + ' to: ' + data.to);
             
         switch(data.code){
             case '11':
                 // 登录反馈
                 if(msg.test)
-                {
+                {cc.log(self);
                     cc.username = msg.username;
                     cc.sys.localStorage.setItem('username', msg.username);
-                    cc.sys.localStorage.setItem('password', this.pas);
-
-                    this.loginPanel.active = false;
-                    this.operatorLayer.active = true;
+                    cc.sys.localStorage.setItem('password', self.pas);
+                    self.loginPanel.active = false;
+                    self.operatorLayer.active = true;
                 }else
                     cc.log(msg.error);
             break;
@@ -73,10 +77,10 @@ cc.Class({
                 {
                     cc.username = msg.username;
                     cc.sys.localStorage.setItem('username', msg.username);
-                    cc.sys.localStorage.setItem('password', this.r_pas1);
+                    cc.sys.localStorage.setItem('password', self.r_pas1);
 
-                    this.registerPanel.active = false;
-                    this.operatorLayer.active = true;
+                    self.registerPanel.active = false;
+                    self.operatorLayer.active = true;
                 }else
                     cc.log(msg.error);
             break;
@@ -85,10 +89,10 @@ cc.Class({
                 // 建房反馈
                 if(msg.test)
                 {
-                    this.showWaitingPanel('房间'+msg.room+'已创建，正在等待对手', 2);
-                    this.createdRoom = true;
+                    self.showWaitingPanel('房间'+msg.room+'已创建，正在等待对手', 2);
+                    self.createdRoom = true;
                 }else{
-                    this.updateWaitingPanel(msg.error, 2);
+                    self.updateWaitingPanel(msg.error, 2);
                 }
             break;
 
@@ -97,9 +101,9 @@ cc.Class({
                 if(msg.test)
                 {
                     cc.mapInit = data;
-                    this.switchBattleScene();
+                    self.switchBattleScene();
                 }else{
-                    this.updateWaitingPanel(msg.error, 2);
+                    self.updateWaitingPanel(msg.error, 2);
                 }
             break;
 
@@ -119,7 +123,7 @@ cc.Class({
 
     onWSClose: function(event){
         cc.log('websocket will close');
-        let cmd = JSON.stringify({'code':'09', 'name':'logOut', data:{}});
+        let cmd = Rson.encode({'code':'09', 'name':'logOut', data:{}});
         cc.log(cmd);
         cc.webSocket.send(cmd);
     },
@@ -150,25 +154,17 @@ cc.Class({
     // 创建房间
     onCreateRoom: function(){
         this.c_pas = this.create_password.string;
-        if(this.c_pas != '')
-        {
-            this.c_pas = this.sha1.hex_sha1(this.c_pas);
-            let cmd = JSON.stringify({'code':'03', data:{'name':'create', 'password':this.c_pas}});
-            cc.log(cmd);
-            cc.webSocket.send(cmd);
-
-            this.operatorLayer.active = false;
-        }else{
-            cc.log('create room failed!');
-            this.c_pas = '';
-            this.create_password.string = '';
-        }
+        this.c_pas = sha1.hex_sha1(this.c_pas);
+        let cmd = Rson.encode({'code':'03', data:{'name':'create', 'password':this.c_pas}});
+        cc.log(cmd);
+        cc.webSocket.send(cmd);
+        this.operatorLayer.active = false;
     },
 
     // 退出匹配
     onCloseRoom: function(){
         if(this.createdRoom){
-            let cmd = JSON.stringify({'code':'06', 'name':'closeR', data:{}});
+            let cmd = Rson.encode({'code':'07', 'name':'closeR', data:{}});
             cc.log(cmd);
             cc.webSocket.send(cmd);
             this.createdRoom = false;
@@ -181,10 +177,10 @@ cc.Class({
     onJoinRoom: function(){
         this.j_room = this.join_room.string;
         this.j_pas = this.join_password.string;
-        if(this.j_room != '' && this.j_pas != '')
+        if(this.j_room != '')
         {
-            this.j_pas = this.sha1.hex_sha1(this.j_pas);
-            let cmd = JSON.stringify({'code':'03', 'name':'join', data:{'room':this.j_room, 'password':this.j_pas}});
+            this.j_pas = sha1.hex_sha1(this.j_pas);
+            let cmd = Rson.encode({'code':'05', 'name':'join', data:{'room':this.j_room, 'password':this.j_pas}});
             cc.log(cmd);
             cc.webSocket.send(cmd);
             this.showWaitingPanel('正在搜索房间，请稍后');
@@ -198,7 +194,7 @@ cc.Class({
 
     // 随机加入房间
     onJoinRandomRoom: function(){
-        let cmd = JSON.stringify({'code':'04', 'name':'rand', data:{}});
+        let cmd = Rson.encode({'code':'04', 'name':'rand', data:{}});
         cc.log(cmd);
         cc.webSocket.send(cmd);
         this.showWaitingPanel('正在匹配房间，请稍后');
@@ -209,10 +205,10 @@ cc.Class({
     onVisitRoom: function(){
         this.v_room = this.visit_room.string;
         this.v_pas = this.visit_password.string;
-        if(this.v_room != '' && this.v_pas != '')
+        if(this.v_room != '')
         {
-            this.v_pas = this.sha1.hex_sha1(this.v_pas);
-            let cmd = JSON.stringify({'code':'03', 'name':'visit', data:{'room':this.v_room, 'password':this.v_pas}});
+            this.v_pas = sha1.hex_sha1(this.v_pas);
+            let cmd = Rson.encode({'code':'06', 'name':'visit', data:{'room':this.v_room, 'password':this.v_pas}});
             cc.log(cmd);
             cc.webSocket.send(cmd);
             this.showWaitingPanel('正在搜索房间，请稍后');
@@ -228,10 +224,12 @@ cc.Class({
     onLoginLogin: function(){
         this.acc = this.account.string;
         this.pas = this.password.string;
-        if(this.acc != '' && this.pas != '')
+        // 密码长度10~18位，必须包含数字字母，允许数字大小写字母中、下划线
+        var pass_reg = /^(?=.{10,18}$)(?![0-9-_]+$)(?![a-zA-Z-_]+$)[0-9a-zA-Z-_]+$/;
+        if(this.acc != '' && pass_reg.test(this.pas))
         {
-            this.pas = this.sha1.hex_sha1(this.pas);
-            let cmd = JSON.stringify({'code':'01', 'name':'login', data:{'account':this.acc, 'password':this.pas}});
+            this.pas = sha1.hex_sha1(this.pas);
+            let cmd = Rson.encode({'code':'01', 'name':'login', data:{'username':this.acc, 'password':this.pas}});
             cc.log(cmd);
             cc.webSocket.send(cmd);
         }else{
@@ -273,8 +271,8 @@ cc.Class({
 
         if(this.r_acc != '' && pass_reg.test(this.r_pas1) && this.r_pas2 === this.r_pas1 && email_reg.test(this.r_email))
         {
-            this.r_pas1 = this.sha1.hex_sha1(this.r_pas1);
-            let cmd = JSON.stringify({'code':'02', 'name':'register', data:{'account':this.r_acc, 'password':this.r_pas1, 'email':this.r_email}});
+            this.r_pas1 = sha1.hex_sha1(this.r_pas1);
+            let cmd = Rson.encode({'code':'02', 'name':'register', data:{'username':this.r_acc, 'password':this.r_pas1, 'email':this.r_email}});
             cc.log(cmd);
             cc.webSocket.send(cmd);
         }else{

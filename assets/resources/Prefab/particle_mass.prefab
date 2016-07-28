@@ -35,8 +35,8 @@
     "_children": [],
     "_rotationX": 0,
     "_rotationY": 0,
-    "_scaleX": -1,
-    "_scaleY": 1,
+    "_scaleX": -0.5,
+    "_scaleY": 0.5,
     "_position": {
       "__type__": "cc.Vec2",
       "x": 292,
@@ -54,13 +54,10 @@
     "_components": [
       {
         "__id__": 2
-      },
-      {
-        "__id__": 3
       }
     ],
     "_prefab": {
-      "__id__": 4
+      "__id__": 3
     },
     "groupIndex": 0
   },
@@ -154,15 +151,6 @@
     "_rotatePerS": 0,
     "_rotatePerSVar": 0,
     "_N$preview": true
-  },
-  {
-    "__type__": "627d8MEZuJNwLZsBysVs0j6",
-    "_name": "",
-    "_objFlags": 0,
-    "node": {
-      "__id__": 1
-    },
-    "_enabled": true
   },
   {
     "__type__": "cc.PrefabInfo",

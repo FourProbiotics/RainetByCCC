@@ -9,6 +9,7 @@ var Chess = cc.Class({
     properties: {
         group: 'G',
         type: 'link',
+        grpNum: 0,
         posX: 1,
         posY: 8,
         hasLineBoost: false,
@@ -150,7 +151,7 @@ var Chess = cc.Class({
     },
 
     // 设置/解除待交换状态
-    // 锁定状态为对方棋子处于我方攻击范围内时的状态
+    // 锁定状态为我方棋子处于交换模式被选择时的状态
     // @judge: 锁定开关，true为开启， false为关闭
     setSwitchTag: function(judge){
         if(judge && !this.isSwitching){

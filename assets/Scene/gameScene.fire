@@ -8521,6 +8521,7 @@
     "_enabled": true,
     "group": "B",
     "type": "bottom",
+    "grpNum": 8,
     "posX": 1,
     "posY": 1,
     "hasLineBoost": false,
@@ -8640,6 +8641,7 @@
     "_enabled": true,
     "group": "B",
     "type": "bottom",
+    "grpNum": 7,
     "posX": 2,
     "posY": 1,
     "hasLineBoost": false,
@@ -8759,6 +8761,7 @@
     "_enabled": true,
     "group": "B",
     "type": "bottom",
+    "grpNum": 6,
     "posX": 3,
     "posY": 1,
     "hasLineBoost": false,
@@ -8878,6 +8881,7 @@
     "_enabled": true,
     "group": "B",
     "type": "bottom",
+    "grpNum": 5,
     "posX": 4,
     "posY": 2,
     "hasLineBoost": false,
@@ -8997,6 +9001,7 @@
     "_enabled": true,
     "group": "B",
     "type": "bottom",
+    "grpNum": 4,
     "posX": 5,
     "posY": 2,
     "hasLineBoost": false,
@@ -9116,6 +9121,7 @@
     "_enabled": true,
     "group": "B",
     "type": "bottom",
+    "grpNum": 3,
     "posX": 6,
     "posY": 1,
     "hasLineBoost": false,
@@ -9235,6 +9241,7 @@
     "_enabled": true,
     "group": "B",
     "type": "bottom",
+    "grpNum": 2,
     "posX": 7,
     "posY": 1,
     "hasLineBoost": false,
@@ -9354,6 +9361,7 @@
     "_enabled": true,
     "group": "B",
     "type": "bottom",
+    "grpNum": 1,
     "posX": 8,
     "posY": 1,
     "hasLineBoost": false,
@@ -9547,6 +9555,7 @@
     "_enabled": true,
     "group": "G",
     "type": "bottom",
+    "grpNum": 1,
     "posX": 1,
     "posY": 8,
     "hasLineBoost": false,
@@ -9555,7 +9564,9 @@
     "lockOn": {
       "__uuid__": "b299cfa3-00dc-4972-b1f5-38837b6e0f68"
     },
-    "switchTag": null,
+    "switchTag": {
+      "__uuid__": "42f0ecdc-5c91-49c1-9f2b-1e9b789a96ae"
+    },
     "lineBoost": {
       "__uuid__": "3906b70f-94b2-46b5-8820-b709a24ecb71"
     }
@@ -9666,6 +9677,7 @@
     "_enabled": true,
     "group": "G",
     "type": "bottom",
+    "grpNum": 2,
     "posX": 2,
     "posY": 8,
     "hasLineBoost": false,
@@ -9674,7 +9686,9 @@
     "lockOn": {
       "__uuid__": "b299cfa3-00dc-4972-b1f5-38837b6e0f68"
     },
-    "switchTag": null,
+    "switchTag": {
+      "__uuid__": "42f0ecdc-5c91-49c1-9f2b-1e9b789a96ae"
+    },
     "lineBoost": {
       "__uuid__": "3906b70f-94b2-46b5-8820-b709a24ecb71"
     }
@@ -9785,6 +9799,7 @@
     "_enabled": true,
     "group": "G",
     "type": "bottom",
+    "grpNum": 3,
     "posX": 3,
     "posY": 8,
     "hasLineBoost": false,
@@ -9793,7 +9808,9 @@
     "lockOn": {
       "__uuid__": "b299cfa3-00dc-4972-b1f5-38837b6e0f68"
     },
-    "switchTag": null,
+    "switchTag": {
+      "__uuid__": "42f0ecdc-5c91-49c1-9f2b-1e9b789a96ae"
+    },
     "lineBoost": {
       "__uuid__": "3906b70f-94b2-46b5-8820-b709a24ecb71"
     }
@@ -9904,6 +9921,7 @@
     "_enabled": true,
     "group": "G",
     "type": "bottom",
+    "grpNum": 4,
     "posX": 4,
     "posY": 7,
     "hasLineBoost": false,
@@ -9912,7 +9930,9 @@
     "lockOn": {
       "__uuid__": "b299cfa3-00dc-4972-b1f5-38837b6e0f68"
     },
-    "switchTag": null,
+    "switchTag": {
+      "__uuid__": "42f0ecdc-5c91-49c1-9f2b-1e9b789a96ae"
+    },
     "lineBoost": {
       "__uuid__": "3906b70f-94b2-46b5-8820-b709a24ecb71"
     }
@@ -10023,6 +10043,7 @@
     "_enabled": true,
     "group": "G",
     "type": "bottom",
+    "grpNum": 5,
     "posX": 5,
     "posY": 7,
     "hasLineBoost": false,
@@ -10031,7 +10052,9 @@
     "lockOn": {
       "__uuid__": "b299cfa3-00dc-4972-b1f5-38837b6e0f68"
     },
-    "switchTag": null,
+    "switchTag": {
+      "__uuid__": "42f0ecdc-5c91-49c1-9f2b-1e9b789a96ae"
+    },
     "lineBoost": {
       "__uuid__": "3906b70f-94b2-46b5-8820-b709a24ecb71"
     }
@@ -10142,6 +10165,7 @@
     "_enabled": true,
     "group": "G",
     "type": "bottom",
+    "grpNum": 6,
     "posX": 6,
     "posY": 8,
     "hasLineBoost": false,
@@ -10150,7 +10174,9 @@
     "lockOn": {
       "__uuid__": "b299cfa3-00dc-4972-b1f5-38837b6e0f68"
     },
-    "switchTag": null,
+    "switchTag": {
+      "__uuid__": "42f0ecdc-5c91-49c1-9f2b-1e9b789a96ae"
+    },
     "lineBoost": {
       "__uuid__": "3906b70f-94b2-46b5-8820-b709a24ecb71"
     }
@@ -10261,6 +10287,7 @@
     "_enabled": true,
     "group": "G",
     "type": "bottom",
+    "grpNum": 7,
     "posX": 7,
     "posY": 8,
     "hasLineBoost": false,
@@ -10269,7 +10296,9 @@
     "lockOn": {
       "__uuid__": "b299cfa3-00dc-4972-b1f5-38837b6e0f68"
     },
-    "switchTag": null,
+    "switchTag": {
+      "__uuid__": "42f0ecdc-5c91-49c1-9f2b-1e9b789a96ae"
+    },
     "lineBoost": {
       "__uuid__": "3906b70f-94b2-46b5-8820-b709a24ecb71"
     }
@@ -10380,6 +10409,7 @@
     "_enabled": true,
     "group": "G",
     "type": "bottom",
+    "grpNum": 8,
     "posX": 8,
     "posY": 8,
     "hasLineBoost": false,
@@ -10388,7 +10418,9 @@
     "lockOn": {
       "__uuid__": "b299cfa3-00dc-4972-b1f5-38837b6e0f68"
     },
-    "switchTag": null,
+    "switchTag": {
+      "__uuid__": "42f0ecdc-5c91-49c1-9f2b-1e9b789a96ae"
+    },
     "lineBoost": {
       "__uuid__": "3906b70f-94b2-46b5-8820-b709a24ecb71"
     }

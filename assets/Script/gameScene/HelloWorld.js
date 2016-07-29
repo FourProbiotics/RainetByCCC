@@ -24,6 +24,7 @@ cc.Class({
         this.currentChess = null;
         this.tips = cc.find('Canvas/fitLayer/stateBar/tips').getComponent(cc.Label);
         this.stateBar = cc.find('Canvas/fitLayer/stateBar');
+        this.curTag = 0;
         
         //先用loader加载plist和texture 再继续添加到spriteFrameCache
         cc.loader.loadRes(this.plistUrl, cc.SpriteAtlas,(err,atlas)=>{
@@ -215,6 +216,27 @@ cc.Class({
                         cc.webSocket.send(cmd);
                     }
                 }
+            node.on(cc.Node.EventType.TOUCH_END, call, this.node);
+        }
+    },
+
+    // 添加移动侦听事件
+    addChessChooseEvent: function(){
+        // 给所有己方棋子添加类型移动选择
+        for(let key in this.myTeam)
+        {
+            let node = this.myTeam[key].node;
+            let chess = node.getComponent('Chess');
+            let call = (event)=>{
+                for(var key in this.myTeam){
+                    let node = this.myTeam[key].node;
+                    node.targetOff(this.node);
+                }
+                // 身份选择完毕后发送消息给服务器
+                let cmd = Rson.encode({'code':'22', 'name':'setted', data:{'curChess': chess.grpNum}});
+                cc.log(cmd);
+                cc.webSocket.send(cmd);
+            }
             node.on(cc.Node.EventType.TOUCH_END, call, this.node);
         }
     },

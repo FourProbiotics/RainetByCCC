@@ -50,25 +50,34 @@ cc.Class({
         switch(data.code){
             case '21':
                 // 游戏开始
+                this.setRoom(msg.room);
+                this.setPlayerNames(msg.myName, msg.enemyName);
+                this.setScores(msg.myScore, msg.enemyScore);
+                this.changeMap(msg.group);
+
                 switch(msg.startMode){
                     case 'battle':
-                    this.addChessChangeEvent();
-                    ;
+                        this.addChessChangeEvent();
                     break;
 
                     case 'visit':
+                        this.initChessBoard(msg.mapData);
                     break;
                 }
             break;
 
             case '23':
                 // 回合开始
-                ;
+                this.setTips('轮到你的回合');
+                this.addChessChooseEvent();
+                this.addTerminalEvent();
             break;
 
             case '24':
                 // 回合结束
-                ;
+                this.setTips('对手的回合');
+                this.removeMyChessEvent();
+                this.removeTerminalEvent();
             break;
 
             case '31':
@@ -162,13 +171,18 @@ cc.Class({
             break;
 
             case '81':
-                // 玩家信息
+                // 暂缺
                 ;
             break;
 
             case '91':
                 // 游戏结束
-                ;
+                if(msg.win)
+                {
+                    this.setTips('一切都是，\n命运石之门的选择！');
+                }else{
+                    this.setTips('失败了失败了失败了失败了失败了失败了失败了失败了失败了');
+                }
             break;
         }
     },
@@ -201,7 +215,7 @@ cc.Class({
                     {
                         this.gamestart = true;
                         cc.log('gamestart', this.gamestart);
-                        this.setTps('请等待对手');
+                        this.setTips('请等待对手');
                         for(var key in this.myTeam){
                             let node = this.myTeam[key].node;
                             let chess = node.getComponent('Chess');
@@ -220,7 +234,7 @@ cc.Class({
         }
     },
 
-    // 添加移动侦听事件
+    // 添加己方棋子移动侦听事件
     addChessChooseEvent: function(){
         // 给所有己方棋子添加类型移动选择
         for(let key in this.myTeam)
@@ -228,7 +242,7 @@ cc.Class({
             let node = this.myTeam[key].node;
             let chess = node.getComponent('Chess');
             let call = (event)=>{
-                for(var key in this.myTeam){
+                for(let key in this.myTeam){
                     let node = this.myTeam[key].node;
                     node.targetOff(this.node);
                 }
@@ -239,6 +253,37 @@ cc.Class({
             }
             node.on(cc.Node.EventType.TOUCH_END, call, this.node);
         }
+    },
+
+    // 添加终端卡侦听
+    addTerminalEvent: function(){
+        cc.log('使用终端卡');
+    },
+
+    // 移除终端卡侦听
+    removeTerminalEvent: function(){
+        ;
+    },
+
+    // 移除己方棋子上的侦听
+    removeMyChessEvent: function(){
+        for(let key in this.myTeam){
+            let node = this.myTeam[key].node;
+            node.targetOff(this.node);
+        }
+    },
+
+    // 移除敌方棋子上的侦听
+    removeEnemyChessEvent: function(){
+        for(let key in this.enemyTeam){
+            let node = this.enemyTeam[key].node;
+            node.targetOff(this.node);
+        }
+    },
+
+    // 根据地图数组初始化棋盘
+    initChessBoard: function(mapData){
+        cc.log('init ChessBoard');
     },
 
     // 改变棋盘样式。不同阵营有不同的棋盘样式
@@ -280,7 +325,7 @@ cc.Class({
 
     // 设置提示信息
     // @str: 提示信息文本
-    setTps: function(str){
+    setTips: function(str){
         this.tips.string = str;
     },
 

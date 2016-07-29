@@ -18,6 +18,8 @@ cc.Class({
 
     // use this for initialization
     onLoad: function () {
+        cc.log("游戏场景加载");
+
         this.plistUrl = 'Texture/Tex1'; //plist的url
         this.currentChess = null;
         this.tips = cc.find('Canvas/fitLayer/stateBar/tips').getComponent(cc.Label);
@@ -27,13 +29,157 @@ cc.Class({
         cc.loader.loadRes(this.plistUrl, cc.SpriteAtlas,(err,atlas)=>{
             // 全局变量
             cc.Tex1 = atlas;
+            // 发送准备结束消息
+            let cmd = Rson.encode({'code':'20', 'name':'prepared', data:{}});
+            cc.log(cmd);
+            cc.webSocket.send(cmd);
         });
 
+        // 更改响应回调函数
+        cc.webSocket.onmessage = this.onWSMsg;
+    },
+
+    // 战斗时websocket回调
+    onWSMsg: function(event){
+        var data = Rson.decode(event.data);
+        var msg = data.data;
+        var self = callbacks;
+        cc.log("serversend: code: " + data.code + ' data: ' + msg + ' to: ' + data.to);
+
+        switch(data.code){
+            case '21':
+                // 游戏开始
+                switch(msg.startMode){
+                    case 'battle':
+                    this.addChessChangeEvent();
+                    ;
+                    break;
+
+                    case 'visit':
+                    break;
+                }
+            break;
+
+            case '23':
+                // 回合开始
+                ;
+            break;
+
+            case '24':
+                // 回合结束
+                ;
+            break;
+
+            case '31':
+                // 超速回线 反馈
+                if(msg.test)
+                {
+                    ;
+                }else
+                    cc.log(msg.error);
+            break;
+
+            case '33':
+                // 超速回线 确认
+                if(msg.test)
+                {
+                    ;
+                }else
+                    cc.log(msg.error);
+            break;
+
+            case '21':
+                // 防火墙 反馈
+                if(msg.test)
+                {
+                    ;
+                }else
+                    cc.log(msg.error);
+            break;
+
+            case '21':
+                // 防火墙 确认
+                if(msg.test)
+                {
+                    ;
+                }else
+                    cc.log(msg.error);
+            break;
+
+            case '51':
+                // 探查 反馈
+                if(msg.test)
+                {
+                    ;
+                }else
+                    cc.log(msg.error);
+            break;
+
+            case '53':
+                // 探查 结束
+                if(msg.test)
+                {
+                    ;
+                }else
+                    cc.log(msg.error);
+            break;
+
+            case '61':
+                // 交换 反馈
+                if(msg.test)
+                {
+                    ;
+                }else
+                    cc.log(msg.error);
+            break;
+
+            case '63':
+                // 交换 确认
+                if(msg.test)
+                {
+                    ;
+                }else
+                    cc.log(msg.error);
+            break;
+
+            case '71':
+                // 棋子选择 反馈
+                if(msg.test)
+                {
+                    ;
+                }else
+                    cc.log(msg.error);
+            break;
+
+            case '73':
+                // 棋子选择 确认
+                if(msg.test)
+                {
+                    ;
+                }else
+                    cc.log(msg.error);
+            break;
+
+            case '81':
+                // 玩家信息
+                ;
+            break;
+
+            case '91':
+                // 游戏结束
+                ;
+            break;
+        }
+    },
+
+    // 给己方棋子添加身份变化事件
+    addChessChangeEvent: function(){
         // 给所有己方棋子添加类型选择
         for(let key in this.myTeam)
         {
             let node = this.myTeam[key].node;
             let chess = node.getComponent('Chess');
+            let idTable = [];//用来记录身份的数组
             let call = (event)=>{
                     if(chess.type != 'virus' && this.vnum < 4)   //换帧
                     {
@@ -56,8 +202,17 @@ cc.Class({
                         cc.log('gamestart', this.gamestart);
                         this.setTps('请等待对手');
                         for(var key in this.myTeam){
-                            this.myTeam[key].node.targetOff(this.node);
+                            let node = this.myTeam[key].node;
+                            let chess = node.getComponent('Chess');
+
+                            node.targetOff(this.node);
+
+                            idTable.push(chess.type === 'link');
                         }
+                        // 身份选择完毕后发送消息给服务器
+                        let cmd = Rson.encode({'code':'22', 'name':'setted', data:{'idTable':idTable}});
+                        cc.log(cmd);
+                        cc.webSocket.send(cmd);
                     }
                 }
             node.on(cc.Node.EventType.TOUCH_END, call, this.node);
@@ -117,7 +272,7 @@ cc.Class({
     // 设置玩家名
     // @myName: 己方玩家名
     // @enemyName: 对方玩家名
-    setPlayerNames(myName, enemyName){
+    setPlayerNames: function(myName, enemyName){
         var label1 = cc.find('myName', this.stateBar).getComponent(cc.Label);
         var label2 = cc.find('enemyName', this.stateBar).getComponent(cc.Label);
         label1.string = myName;
@@ -127,7 +282,7 @@ cc.Class({
     // 设置玩家分数
     // @myName: 己方分数
     // @enemyName: 对方分数
-    setScores(myScore, enemyScore){
+    setScores: function(myScore, enemyScore){
         var label1 = cc.find('myScore', this.stateBar).getComponent(cc.Label);
         var label2 = cc.find('enemyScore', this.stateBar).getComponent(cc.Label);
         label1.string = myName;

@@ -8,32 +8,10 @@ cc.Class({
 
     // use this for initialization
     onLoad: function () {
-        this.operatorLayer = cc.find('Canvas/operator');
-        this.loginPanel = cc.find('Canvas/loginPanel');
+        // 获得callbacks脚本组件
         this.callbacks = cc.find('callbacks_script').getComponent('callbacks');
         // 初始化websocket
         cc.webSocket = this.initWebSocket('ws://121.42.170.78:12345');
-        // var sha1 = require('sha1');
-        // var salt = this.randomString();
-        // var pass = sha1.hex_sha1('password');
-        // cc.sys.localStorage.setItem('username', 'FouProBiotics');
-        // cc.sys.localStorage.setItem('salt', salt);
-        // cc.sys.localStorage.setItem('password', pass);
-        let username = cc.sys.localStorage.getItem('username');
-        let password = cc.sys.localStorage.getItem('password');
-
-        // 当本地保存了用户名密码时尝试自动登录，否则需要手动登录
-        if(username != null && username != 'null' && password != null && password != 'null')
-        {
-            cc.log(username, password);
-            // cc.sys.localStorage.setItem('username', null);
-            // cc.sys.localStorage.setItem('salt', null);
-            // cc.sys.localStorage.setItem('password', null);
-
-            this.operatorLayer.active = true;
-        }else{
-            this.loginPanel.active = true;
-        }
     },
 
     randomString: function(len) {

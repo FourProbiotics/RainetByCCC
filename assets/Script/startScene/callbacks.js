@@ -49,40 +49,60 @@ cc.Class({
 
     onWSOpen: function(event){
         cc.log('websocket connected');
+        // 尝试自动登录
+        let power = cc.sys.localStorage.getItem('power');
+        // 当本地保存了用户名密码时尝试自动登录，否则需要手动登录
+        if(power != null && power != 'null')
+        {
+            callbacks.autoLogin(power);
+        }else{
+            callbacks.loginPanel.active = true;
+        }
     },
 
     onWSMsg: function(event){
         var data = Rson.decode(event.data);
         var msg = data.data;
         var self = callbacks;
-        cc.log("serversend: code: " + data.code + ' data: ' + msg + ' to: ' + data.to);
+        cc.log("serversend: code: " + data.code + ' data: ' + JSON.stringify(msg) + ' to: ' + data.to);
             
         switch(data.code){
             case '11':
                 // 登录反馈
                 if(msg.test)
-                {cc.log(self);
-                    cc.username = msg.username;
-                    cc.sys.localStorage.setItem('username', msg.username);
-                    cc.sys.localStorage.setItem('password', self.pas);
+                {
+                    cc.sys.localStorage.setItem('power', msg.power);
                     self.loginPanel.active = false;
                     self.operatorLayer.active = true;
-                }else
+                }else{
                     cc.log(msg.error);
+                    self.operatorLayer.active = false;
+                    // 初始化登录界面
+                    self.loginPanel.active = true;
+                    self.password.string = '';
+                    // 清空自动登录缓存
+                    cc.sys.localStorage.setItem('username', null);
+                    cc.sys.localStorage.setItem('password', null);
+                }
+                    
             break;
 
             case '12':
                 // 注册反馈
                 if(msg.test)
                 {
-                    cc.username = msg.username;
-                    cc.sys.localStorage.setItem('username', msg.username);
-                    cc.sys.localStorage.setItem('password', self.r_pas1);
+                    cc.sys.localStorage.setItem('power', msg.power);
 
                     self.registerPanel.active = false;
                     self.operatorLayer.active = true;
-                }else
+                }else{
                     cc.log(msg.error);
+                    self.operatorLayer.active = false;
+                    // 初始化注册界面
+                    self.registerPanel.active = true;
+                    self.registerPassword1.string = '';
+                    self.registerPassword2.string = '';
+                }
             break;
 
             case '13':
@@ -151,11 +171,18 @@ cc.Class({
         cc.director.end();
     },
 
+    // 自动登录
+    autoLogin: function(power){
+        let cmd = Rson.encode({'code':'01', 'name':'login', data:{'power':power}});
+        cc.log(cmd);
+        cc.webSocket.send(cmd);
+    },
+
     // 创建房间
     onCreateRoom: function(){
         this.c_pas = this.create_password.string;
         this.c_pas = sha1.hex_sha1(this.c_pas);
-        let cmd = Rson.encode({'code':'03', data:{'name':'create', 'password':this.c_pas}});
+        let cmd = Rson.encode({'code':'03', data:{'name':'create', 'password':[12,22,31]}});
         cc.log(cmd);
         cc.webSocket.send(cmd);
         this.operatorLayer.active = false;

@@ -53,15 +53,16 @@ cc.Class({
                 this.setRoom(msg.room);
                 this.setPlayerNames(msg.myName, msg.enemyName);
                 this.setScores(msg.myScore, msg.enemyScore);
+                this.group = msg.group;
                 this.changeMap(msg.group);
 
-                switch(msg.startMode){
-                    case 'battle':
-                        this.addChessChangeEvent();
+                switch(msg.group){
+                    case 'V':
+                        this.initChessBoard(msg.mapData);
                     break;
 
-                    case 'visit':
-                        this.initChessBoard(msg.mapData);
+                    default:
+                        this.addChessChangeEvent();
                     break;
                 }
             break;
@@ -171,8 +172,8 @@ cc.Class({
             break;
 
             case '81':
-                // 暂缺
-                ;
+                // 弹幕
+                this.shotBullet(msg.string, msg.sender);
             break;
 
             case '91':

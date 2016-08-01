@@ -30,10 +30,8 @@ cc.Class({
         cc.loader.loadRes(this.plistUrl, cc.SpriteAtlas,(err,atlas)=>{
             // 全局变量
             cc.Tex1 = atlas;
-            // 发送准备结束消息
-            let cmd = Rson.encode({'code':'20', 'name':'prepared', data:{}});
-            cc.log(cmd);
-            cc.webSocket.send(cmd);
+            // 发送准备完成消息
+            this.sendData({'code':'20', 'name':'prepared', data:{}});
         });
 
         // 更改响应回调函数
@@ -226,9 +224,7 @@ cc.Class({
                             idTable.push(chess.type === 'link');
                         }
                         // 身份选择完毕后发送消息给服务器
-                        let cmd = Rson.encode({'code':'22', 'name':'setted', data:{'idTable':idTable}});
-                        cc.log(cmd);
-                        cc.webSocket.send(cmd);
+                        this.sendData({'code':'22', 'name':'setted', data:{'idTable':idTable}});
                     }
                 }
             node.on(cc.Node.EventType.TOUCH_END, call, this.node);
@@ -248,9 +244,7 @@ cc.Class({
                     node.targetOff(this.node);
                 }
                 // 身份选择完毕后发送消息给服务器
-                let cmd = Rson.encode({'code':'22', 'name':'setted', data:{'curChess': chess.grpNum}});
-                cc.log(cmd);
-                cc.webSocket.send(cmd);
+                this.sendData({'code':'22', 'name':'setted', data:{'curChess': chess.grpNum}});
             }
             node.on(cc.Node.EventType.TOUCH_END, call, this.node);
         }
@@ -506,4 +500,11 @@ cc.Class({
         this.node.addChild(bullet);
         bullet.runAction(seq);
     },
+
+    // 发送消息给服务端
+    sendData: function(cmd){
+        cmd = Rson.encode(cmd);
+        cc.log(cmd);
+        cc.webSocket.send(cmd);
+    }
 });

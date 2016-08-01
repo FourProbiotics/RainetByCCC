@@ -81,8 +81,7 @@ cc.Class({
                     self.loginPanel.active = true;
                     self.password.string = '';
                     // 清空自动登录缓存
-                    cc.sys.localStorage.setItem('username', null);
-                    cc.sys.localStorage.setItem('password', null);
+                    cc.sys.localStorage.setItem('power', null);
                 }
                     
             break;
@@ -120,7 +119,7 @@ cc.Class({
                 // 匹配反馈
                 if(msg.test)
                 {
-                    cc.mapInit = data;
+                    // 匹配成功，切换游戏场景
                     self.switchBattleScene();
                 }else{
                     self.updateWaitingPanel(msg.error, 2);
@@ -159,8 +158,7 @@ cc.Class({
     },
 
     onLogout: function(){
-        cc.sys.localStorage.setItem('username', '');
-        cc.sys.localStorage.setItem('password', '');
+        cc.sys.localStorage.setItem('power', '');
 
         this.loginPanel.active = true;
         this.operatorLayer.active = false;

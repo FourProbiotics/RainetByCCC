@@ -71,7 +71,9 @@ cc.Class({
                 // 登录反馈
                 if(msg.test)
                 {
+                    // 保存新的登录验证信息
                     cc.sys.localStorage.setItem('power', msg.power);
+                    // 显示操作界面
                     self.loginPanel.active = false;
                     self.operatorLayer.active = true;
                 }else{

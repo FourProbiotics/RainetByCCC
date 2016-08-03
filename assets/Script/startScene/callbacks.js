@@ -128,12 +128,10 @@ cc.Class({
                 }
             break;
 
-            case '15':
-                // 进房反馈
-            break;
-
-            case '16':
-                // 参观反馈
+            case '17':
+                // 退出匹配反馈
+                this.operatorLayer.active = true;
+                this.hideWaitingPanel();
             break;
         }
     },
@@ -181,8 +179,7 @@ cc.Class({
     // 创建房间
     onCreateRoom: function(){
         this.c_pas = this.create_password.string;
-        this.c_pas = sha1.hex_sha1(this.c_pas);
-        let cmd = Rson.encode({'code':'03', data:{'name':'create', 'password':[12,22,31]}});
+        let cmd = Rson.encode({'code':'03', data:{'name':'create', 'password':this.c_pas}});
         cc.log(cmd);
         cc.webSocket.send(cmd);
         this.operatorLayer.active = false;
@@ -190,14 +187,10 @@ cc.Class({
 
     // 退出匹配
     onCloseRoom: function(){
-        if(this.createdRoom){
-            let cmd = Rson.encode({'code':'07', 'name':'closeR', data:{}});
-            cc.log(cmd);
-            cc.webSocket.send(cmd);
-            this.createdRoom = false;
-        }
-        this.operatorLayer.active = true;
-        this.hideWaitingPanel();
+        let cmd = Rson.encode({'code':'07', 'name':'closeR', data:{}});
+        cc.log(cmd);
+        cc.webSocket.send(cmd);
+        this.createdRoom = false;
     },
 
     // 加入房间
@@ -206,7 +199,6 @@ cc.Class({
         this.j_pas = this.join_password.string;
         if(this.j_room != '')
         {
-            this.j_pas = sha1.hex_sha1(this.j_pas);
             let cmd = Rson.encode({'code':'05', 'name':'join', data:{'room':this.j_room, 'password':this.j_pas}});
             cc.log(cmd);
             cc.webSocket.send(cmd);

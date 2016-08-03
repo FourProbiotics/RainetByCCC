@@ -4,6 +4,7 @@
 14匹配反馈 test:bool, room:int, name, score, e_name, e_score[, map][, error]
 //15进入房间反馈 test:bool, room:int, name, score, e_name, e_score
 //16参观反馈  test:bool, room:int, name, score, e_name, e_score, terminal, e_terminal, map
+17退出匹配反馈 test:bool(true)
 
 
 21游戏开始 room myName enemyName myScore enemyScore group startMode
@@ -28,6 +29,8 @@
 81暂缺
 91游戏结束
 
+99心跳检测
+
 发送格式：{code:, data:{}, to: username}
 账号信息：
 username
@@ -37,3 +40,5 @@ score
 login
 loginDate
 lastLogin
+
+匹配采取循环，并且每次循环判断用户是否取消了匹配

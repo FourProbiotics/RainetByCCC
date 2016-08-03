@@ -24,11 +24,12 @@ cc.Class({
         this.currentChess = null;
         this.tips = cc.find('Canvas/fitLayer/stateBar/tips').getComponent(cc.Label);
         this.stateBar = cc.find('Canvas/fitLayer/stateBar');
+        this.buttonBar = cc.find('Canvas/fitLayer/buttonBar').getComponent('buttonBar');
         this.curTag = 0;
         
         //先用loader加载plist和texture 再继续添加到spriteFrameCache
         cc.loader.loadRes(this.plistUrl, cc.SpriteAtlas,(err,atlas)=>{
-            // 全局变量
+            // 全局变量 图集
             cc.Tex1 = atlas;
             // 发送准备完成消息
             this.sendData({'code':'20', 'name':'prepared', data:{}});
@@ -171,7 +172,9 @@ cc.Class({
 
             case '81':
                 // 弹幕
-                this.shotBullet(msg.string, msg.sender);
+                // 对战玩家看不到游客弹幕
+                if(msg.sender != 'V' || this.group == 'V')
+                    this.shotBullet(msg.string, msg.sender);
             break;
 
             case '91':
@@ -257,7 +260,7 @@ cc.Class({
 
     // 移除终端卡侦听
     removeTerminalEvent: function(){
-        ;
+        cc.log('停用终端卡');
     },
 
     // 移除己方棋子上的侦听
@@ -493,6 +496,7 @@ cc.Class({
                 bullet.color = cc.color(0, 0, 255);
             break;
             case 'V':
+                bullet.color = cc.color(220, 220, 220);
             break;
         }
         var seq = cc.sequence(cc.moveBy(time, -winWidth - bullet.width, 0), cc.callFunc(()=>{bullet.removeFromParent();}));

@@ -12,6 +12,7 @@ cc.Class({
     // use this for initialization
     onLoad: function () {
         var self = this;
+        this.myTerm = false;
         var listener = {
             event: cc.EventListener.TOUCH_ONE_BY_ONE,
             onTouchBegan: function (touch, event) {
@@ -28,6 +29,12 @@ cc.Class({
 
     showTerminals: function(){
         this.hide(this.sys);
+        if(!this.myTerm)
+        {
+            if(!shown)
+                this.hide(this.terminals);
+            return;
+        }
         let shown = this.show(this.terminals);
         if(!shown){
             this.hide(this.terminals);
@@ -51,6 +58,11 @@ cc.Class({
     leaveButton: function(){
         this.hide(this.terminals);
         this.hide(this.sys);
+    },
+
+    // 启用/禁用终端卡面板
+    setTerminalPanelEnable: function(enable){
+        this.myTerm = enable;
     },
 
     // 显示需要出现的对象

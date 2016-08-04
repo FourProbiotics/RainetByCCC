@@ -49,42 +49,46 @@ cc.Class({
         switch(data.code){
             case '21':
                 // 游戏开始
-                this.setRoom(msg.room);
-                this.setPlayerNames(msg.myName, msg.enemyName);
-                this.setScores(msg.myScore, msg.enemyScore);
-                this.group = msg.group;
-                this.changeMap(msg.group);
+                self.setRoom(msg.room);
+                self.setPlayerNames(msg.myName, msg.enemyName);
+                self.setScores(msg.myScore, msg.enemyScore);
+                self.group = msg.group;
+                self.changeMap(msg.group);
 
                 switch(msg.group){
                     case 'V':
-                        this.initChessBoard(msg.mapData);
+                        self.initChessBoard(msg.mapData);
                     break;
-
+                    //非游客模式
                     default:
-                        this.addChessChangeEvent();
+                        self.addChessChangeEvent();
                     break;
                 }
             break;
 
             case '23':
                 // 回合开始
-                this.setTips('轮到你的回合');
-                this.addChessChooseEvent();
-                this.addTerminalEvent();
+                self.setTips('轮到你的回合');
+                self.addChessChooseEvent();
+                self.addTerminalEvent();
             break;
 
             case '24':
                 // 回合结束
-                this.setTips('对手的回合');
-                this.removeMyChessEvent();
-                this.removeTerminalEvent();
+                self.setTips('对手的回合');
+                self.removeMyChessEvent();
+                self.removeTerminalEvent();
             break;
 
             case '31':
                 // 超速回线 反馈
                 if(msg.test)
                 {
-                    ;
+                    let chesses = msg.enableChess;
+                    for(let key in chesses)
+                    {
+                        let target = self.myTeam[chesses[key]];
+                    }
                 }else
                     cc.log(msg.error);
             break;
@@ -173,17 +177,17 @@ cc.Class({
             case '81':
                 // 弹幕
                 // 对战玩家看不到游客弹幕
-                if(msg.sender != 'V' || this.group == 'V')
-                    this.shotBullet(msg.string, msg.sender);
+                if(msg.sender != 'V' || self.group == 'V')
+                    self.shotBullet(msg.string, msg.sender);
             break;
 
             case '91':
                 // 游戏结束
                 if(msg.win)
                 {
-                    this.setTips('一切都是，\n命运石之门的选择！');
+                    self.setTips('一切都是，\n命运石之门的选择！');
                 }else{
-                    this.setTips('失败了失败了失败了失败了失败了失败了失败了失败了失败了');
+                    self.setTips('失败了失败了失败了失败了失败了失败了失败了失败了失败了');
                 }
             break;
         }
@@ -229,7 +233,7 @@ cc.Class({
                         // 身份选择完毕后发送消息给服务器
                         this.sendData({'code':'22', 'name':'setted', data:{'idTable':idTable}});
                     }
-                }
+            }
             node.on(cc.Node.EventType.TOUCH_END, call, this.node);
         }
     },
@@ -255,12 +259,14 @@ cc.Class({
 
     // 添加终端卡侦听
     addTerminalEvent: function(){
-        cc.log('使用终端卡');
+        cc.log('启用终端卡');
+        this.buttonBar.setTerminalPanelEnable(true);
     },
 
     // 移除终端卡侦听
     removeTerminalEvent: function(){
         cc.log('停用终端卡');
+        this.buttonBar.setTerminalPanelEnable(false);
     },
 
     // 移除己方棋子上的侦听
@@ -278,6 +284,28 @@ cc.Class({
             node.targetOff(this.node);
         }
     },
+
+
+
+    // 给棋子加上lineboost选择事件
+    addLBEvent: function(chess){
+        ;
+    },
+    // 给棋子加上viruschecker选择事件
+    addVCEvent: function(chess){
+        ;
+    },
+
+    // 给棋子加上404选择事件
+    addNFEvent: function(chess){
+        ;
+    },
+
+    // 给棋盘加上firewall选择事件
+    addFWEvent: function(blockMap){
+        ;
+    },
+
 
     // 根据地图数组初始化棋盘
     initChessBoard: function(mapData){

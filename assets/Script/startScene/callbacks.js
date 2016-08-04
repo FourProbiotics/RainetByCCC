@@ -20,7 +20,6 @@ cc.Class({
         this.waitingIcon = cc.find('Canvas/waitingPanel/icon');
         this.closeRoomBt = cc.find('Canvas/waitingPanel/closeBt');
         this.waitingLabel = cc.find('Canvas/waitingPanel/Label').getComponent(cc.Label);
-        this.createdRoom = false;
         // 登录信息
         this.choiceLayer = cc.find('Canvas/operator/choiceLayer');
         this.loginPanel = cc.find('Canvas/loginPanel');
@@ -111,7 +110,6 @@ cc.Class({
                 if(msg.test)
                 {
                     self.showWaitingPanel('房间'+msg.room+'已创建，正在等待对手', 2);
-                    self.createdRoom = true;
                 }else{
                     self.updateWaitingPanel(msg.error, 2);
                 }
@@ -190,7 +188,6 @@ cc.Class({
         let cmd = Rson.encode({'code':'07', 'name':'closeR', data:{}});
         cc.log(cmd);
         cc.webSocket.send(cmd);
-        this.createdRoom = false;
     },
 
     // 加入房间

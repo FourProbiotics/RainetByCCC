@@ -56,6 +56,7 @@ cc.Class({
                 self.changeMap(msg.group);
 
                 switch(msg.group){
+                    // 游客模式
                     case 'V':
                         self.initChessBoard(msg.mapData);
                     break;
@@ -89,8 +90,10 @@ cc.Class({
                     {
                         let target = self.myTeam[chesses[key]];
                     }
-                }else
-                    cc.log(msg.error);
+                }else{
+                    // 摘除已装备的超速回线
+                    self.setLinBoost(target, false);
+                }
             break;
 
             case '33':

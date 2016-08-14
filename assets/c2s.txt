@@ -10,25 +10,27 @@
 99心跳检测反馈
 
 
+
 20战斗界面加载完成
 22发送己方阵容给对方
 
-30超速回线使用（do cancel resume）
-32选择使用棋子
+30超速回线使用（do cancel resume）{'code':'30', 'name':'start LB', data:{}}
+32选择使用棋子{'code':'32', 'name':'LBChoose', data:{'no': this.grpNum}}
 
-40防火墙使用（do cancel resume）
-42使用点
+40防火墙使用（do cancel resume）{'code':'40', 'name':'start FW', data:{}}
+42使用点{'code':'42', 'name':'fireWall', data:{'x':pos.x, 'y':pos.y}}
 
-50病毒探查（do cancel）
-52使用对象棋子
+50病毒探查（do cancel）{'code':'50', 'name':'start VC', data:{}}
+52使用对象棋子{'code':'52', 'name':'VCChoose', data:{'no': this.grpNum}}
 
-60 404交换（do cancel）
-62选择交换棋子
+60 404交换（do cancel）{'code':'60', 'name':'start NF', data:{}}
+62选择交换棋子{'code':'62', 'name':'404 not found', data:{'no1':ChessClass.nf_no1, 'no2':ChessClass.nf_no2, 'check':isSwitch}}
 
-70选择己方棋子
+70选择己方棋子{'code':'70', 'name':'setted', data:{'no': chess.grpNum}}
 72移动棋子
 
 80聊天
 90认输
+91回合结束
 
 发送格式：{code:, name:, data:{}}

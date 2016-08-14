@@ -1,3 +1,5 @@
+var ChessClass = require('Chess');
+
 cc.Class({
     extends: cc.Component,
 
@@ -68,9 +70,14 @@ cc.Class({
 
     onSwitchYes: function(){
         this.hide();
+        let main = cc.find('Canvas').getComponent('HelloWorld');
+        main.removeNFEvent();
+        main.swithChess(main.group, ChessClass.nf_no1, ChessClass.nf_no2, true);
     },
 
     onSwitchNo: function(){
         this.hide();
+        let main = cc.find('Canvas').getComponent('HelloWorld');
+        main.swithChess(main.group, ChessClass.nf_no1, ChessClass.nf_no2, false);
     }
 });

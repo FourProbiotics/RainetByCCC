@@ -34,6 +34,11 @@ cc.Class({
 
                 this.node.addChild(this.focus);
                 this.focus.runAction(seq);
+
+                this.focus.on('touchend', (event) => {
+                    // 选定棋子移动方向
+                    this.sendData({'code':'74', 'name':'turnEnd', data:{}});
+                    }, this);
             });
         }else if(!choose && this.canPass){
 
@@ -59,4 +64,11 @@ cc.Class({
             this.node.removeChildByTag(wallTag);
         }
     },
+
+    // 发送消息给服务端
+    sendData: function(cmd){
+        cmd = Rson.encode(cmd);
+        cc.log(cmd);
+        cc.webSocket.send(cmd);
+    }
 });

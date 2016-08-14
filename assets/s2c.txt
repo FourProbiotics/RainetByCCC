@@ -1,5 +1,5 @@
-11登录反馈 test:bool, username:string[, error]
-12注册反馈 test:bool, username: string[, error]
+11登录反馈 test:bool, power:string, uid[, error]
+12注册反馈 test:bool, power: string, uid[, error]
 13创建房间反馈 test:bool, room:int[, error]
 14匹配反馈 test:bool, room:int, name, score, e_name, e_score[, map][, error]
 //15进入房间反馈 test:bool, room:int, name, score, e_name, e_score
@@ -7,7 +7,7 @@
 17退出匹配反馈 test:bool(true)
 
 
-21游戏开始 room myName enemyName myScore enemyScore group startMode
+21游戏开始 room myName enemyName myScore enemyScore group playerType
 23回合开始
 24回合结束
 

@@ -75,6 +75,8 @@ cc.Class({
                     // 显示操作界面
                     self.loginPanel.active = false;
                     self.operatorLayer.active = true;
+                    // 保存uid
+                    cc.UID = msg.uid;
                 }else{
                     cc.log(msg.error);
                     self.operatorLayer.active = false;
@@ -95,6 +97,8 @@ cc.Class({
 
                     self.registerPanel.active = false;
                     self.operatorLayer.active = true;
+                    // 保存uid
+                    cc.UID = msg.uid;
                 }else{
                     cc.log(msg.error);
                     self.operatorLayer.active = false;

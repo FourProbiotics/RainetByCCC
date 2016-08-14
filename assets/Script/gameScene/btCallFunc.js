@@ -1,3 +1,5 @@
+var ChessClass = require('Chess');
+
 cc.Class({
     extends: cc.Component,
 
@@ -13,28 +15,39 @@ cc.Class({
         this.fw = cc.find('Canvas/terminals/fireWall');
         this.vc = cc.find('Canvas/terminals/virusChecker');
         this.nf = cc.find('Canvas/terminals/404');
+        this.talkInput = cc.find('Canvas/fitLayer/buttonBar/talkBox').getComponent(cc.EditBox);
     },
 
     onLineBoost: function(){
         this.hide(this.terminals);
+        this.sendData({'code':'30', 'name':'start LB', data:{}});
     },
 
     onFireWall: function(){
         this.hide(this.terminals);
+        this.sendData({'code':'40', 'name':'start FW', data:{}});
     },
 
     onVirusChecker: function(){
         this.hide(this.terminals);
+        this.sendData({'code':'50', 'name':'start VC', data:{}});
     },
 
     onNotFound: function(){
         this.hide(this.terminals);
-        this.canvas.showPop('switch');
+        this.sendData({'code':'60', 'name':'start NF', data:{}});
     },
 
     onSysClose: function(){
         this.hide(this.sysPanel);
         this.canvas.showPop('close');
+    },
+
+    onSendTalk: function(){
+        let str = this.talkInput.string;
+        this.talkInput.string = '';
+
+        this.sendData({'code':'80', 'name':'sendTalk', data:{'str':str}});
     },
 
     // 显示需要出现的对象
@@ -60,5 +73,12 @@ cc.Class({
         var seq = cc.sequence(act1, callback);
         obj.runAction(seq);
         return true;
-    }
+    },
+
+    // 发送消息给服务端
+    sendData: function(cmd){
+        cmd = Rson.encode(cmd);
+        cc.log(cmd);
+        cc.webSocket.send(cmd);
+    },
 });

@@ -2,6 +2,8 @@ var sha1 = require('sha1');
 var Rson = require('Rson');
 var ChessClass = require('Chess');
 
+var self;
+
 cc.Class({
     extends: cc.Component,
 
@@ -30,7 +32,7 @@ cc.Class({
         this.stateBar = cc.find('Canvas/fitLayer/stateBar');
         this.buttonBar = cc.find('Canvas/fitLayer/buttonBar').getComponent('buttonBar');
         this.curTag = 0;
-        var self = this;
+        self = this;
         
         //先用loader加载plist和texture 再继续添加到spriteFrameCache
         cc.loader.loadRes(this.plistUrl, cc.SpriteAtlas,(err,atlas)=>{
@@ -78,13 +80,12 @@ cc.Class({
                     return;
 
                 // 回合开始
-
+                self.setTips('你的回合');
                 // 移除现有棋子事件侦听
                 self.removeMyChessEvent();
-                        
-                self.setTips('轮到你的回合');
+                // 添加侦听
                 self.addChessChooseEvent();
-                self.addTerminalEvent();
+                self.addTerminalChoose();
             break;
 
             case '24':
@@ -103,6 +104,14 @@ cc.Class({
                     //己方
                     if(msg.test)
                     {
+                        // 先取消其他侦听
+                        this.removeMyChessEvent();
+                        this.unsetPasses();
+                        this.removeEnemyChessEvent();
+                        if(this.FWListener){
+                            cc.eventManager.removeListener(this.FWListener);
+                            this.FWListener = null;
+                        }
 
                         let chesses = msg.target;
                         for(let key in chesses)
@@ -156,7 +165,15 @@ cc.Class({
                 if(data.to == cc.UID){
                     if(msg.test)
                     {
-                        
+                        // 先取消其他侦听
+                        this.removeMyChessEvent();
+                        this.unsetPasses();
+                        this.removeEnemyChessEvent();
+                        if(this.FWListener){
+                            cc.eventManager.removeListener(this.FWListener);
+                            this.FWListener = null;
+                        }
+
                         self.addFWEvent(msg.target);
                     }else{
                         // 移除己方现有防火墙
@@ -205,7 +222,15 @@ cc.Class({
                 // 探查 反馈
                 if(msg.test)
                 {
-                        
+                    // 先取消其他侦听
+                    this.removeMyChessEvent();
+                    this.unsetPasses();
+                    this.removeEnemyChessEvent();
+                    if(this.FWListener){
+                        cc.eventManager.removeListener(this.FWListener);
+                        this.FWListener = null;
+                    }
+                    
                     let chesses = msg.target;
                     for(let key in chesses)
                     {
@@ -242,6 +267,15 @@ cc.Class({
                 // 交换 反馈
                 if(msg.test)
                 {
+                    // 先取消其他侦听
+                    this.removeMyChessEvent();
+                    this.unsetPasses();
+                    this.removeEnemyChessEvent();
+                    if(this.FWListener){
+                        cc.eventManager.removeListener(this.FWListener);
+                        this.FWListener = null;
+                    }
+
                     // 清空记录notfound对象的静态变量
                     ChessClass.nf_no1 = null;
                     ChessClass.nf_no2 = null;
@@ -429,8 +463,6 @@ cc.Class({
         }
     },
 
-
-
     // 给棋子加上lineboost选择事件
     addLBEvent: function(chess){
         let chessScript = chess.getComponent('Chess');
@@ -511,7 +543,10 @@ cc.Class({
 
     // 解除fire wall事件侦听
     removeFWEvent:function(){
-        cc.eventManager.removeListener(this.FWListener);
+        if(this.FWListener){
+            cc.eventManager.removeListener(this.FWListener);
+            this.FWListener = null;
+        }
         this.removeEnemyChessEvent();
         this.removeMyChessEvent();
         this.addChessChooseEvent();
@@ -526,8 +561,7 @@ cc.Class({
     // 改变棋盘样式。不同阵营有不同的棋盘样式
     // @type: 阵营类别
     changeMap: function(type){
-        if(this.group == type)
-            return;
+        
         this.group = type;
         if(type == 'G'){
             this.checkboard.spriteFrame = cc.Tex1.getSpriteFrame('checkboard1');
@@ -589,8 +623,8 @@ cc.Class({
     setScores: function(myScore, enemyScore){
         var label1 = cc.find('myScore', this.stateBar).getComponent(cc.Label);
         var label2 = cc.find('enemyScore', this.stateBar).getComponent(cc.Label);
-        label1.string = myName;
-        label2.string = enemyName;
+        label1.string = myScore;
+        label2.string = enemyScore;
     },
 
     // 设置终端卡剩余状态显示
@@ -658,7 +692,8 @@ cc.Class({
     // @c: 棋子在数组中的下标
     // @x, y: 移动坐标
     moveChess: function(group, c, x, y){
-        var chess = group==this.group?this.myTeam[c] : this.enemyTeam[c];
+        cc.log('棋子移动', group, c, x, y);
+        var chess = group==this.group?this.myTeam[c-1] : this.enemyTeam[c-1];
         chess.getComponent('Chess').moveTo(x, y);
     },
 
@@ -680,8 +715,8 @@ cc.Class({
     // @isSwitch: 开启还是关闭
     // @group: fireWall的种类
     setFireWall: function(group, bx, by, isSwitch){
-        var board = this.checkboard;
-        let block = cc.find('line'+bx+'/block'+by, board);
+        var board = this.checkboard.node;
+        let block = cc.find('line'+by+'/block'+bx, board);
         block.getComponent('block').setFireWall(isSwitch, group);
     },
 
@@ -703,32 +738,34 @@ cc.Class({
     // @bx, by: 指定的空格位置坐标
     // @isSwitch: 开启还是关闭
     setBlockCanPass: function(bx, by, isSwitch){
-        var board = this.checkboard;
-        let block = cc.find('line'+bx+'/block'+by, board).getComponent('block');
+        var board = this.checkboard.node;
+        let block = cc.find('line'+by+'/block'+bx, board).getComponent('block');
         block.setCanPass(isSwitch);
     },
 
     // 设置选中棋子周围的可通过效果
     // @blocks: 记录可通过区域的数组
     setPasses: function(blocks){
-        // 关闭所有通过效果
+        cc.log('关闭所有通过效果');
         this.unsetPasses();
 
-        // 开启指定位置效果
-        for(var i = 0;i < blocks.length;i++)
+        cc.log('开启指定位置效果');
+        for(let key in blocks)
         {
-            let pos = blocks[i];
+            let pos = blocks[key];
             this.setBlockCanPass(pos['x'], pos['y'], true);
+            cc.log('指定位置', pos['x'], pos['y']);
         }
     },
 
     unsetPasses: function(){
         // 关闭所有通过效果
-        for(var i = 1;i <= 8;i++)
+        for(let i = 1;i <= 8;i++)
         {
-            for(var j = 1;j <= 8;j++)
+            for(let j = 1;j <= 8;j++)
             {
-                let block = cc.find('line'+bx+'/block'+by, this.checkboard).getComponent('block');
+                cc.log('关闭效果', 'line'+i+'/block'+j);
+                let block = cc.find('line'+i+'/block'+j, this.checkboard.node).getComponent('block');
                 block.setCanPass(false);
             }
         }
@@ -790,11 +827,16 @@ cc.Class({
     // 回合结束时处理所有侦听
     tuenEnd:function()
     {
+        cc.log('回合结束');
         this.setTips('对手的回合');
         this.removeMyChessEvent();
+        this.unsetPasses();
         this.removeEnemyChessEvent();
         this.removeTerminalChoose();
-        cc.eventManager.removeListener(this.FWListener);
+        if(this.FWListener){
+            cc.eventManager.removeListener(this.FWListener);
+            this.FWListener = null;
+        }
         this.sendData({'code':'91', 'name':'turnEnd', data:{}});
     }
 });

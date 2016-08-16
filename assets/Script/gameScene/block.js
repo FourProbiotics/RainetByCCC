@@ -1,3 +1,5 @@
+var Rson = require('Rson');
+
 cc.Class({
     extends: cc.Component,
 
@@ -37,7 +39,7 @@ cc.Class({
 
                 this.focus.on('touchend', (event) => {
                     // 选定棋子移动方向
-                    this.sendData({'code':'74', 'name':'turnEnd', data:{}});
+                    this.sendData({'code':'72', 'name':'move', data:{'x':this.posX, 'y':this.posY}});
                     }, this);
             });
         }else if(!choose && this.canPass){

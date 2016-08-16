@@ -192,6 +192,9 @@ cc.Class({
         let cmd = Rson.encode({'code':'07', 'name':'closeR', data:{}});
         cc.log(cmd);
         cc.webSocket.send(cmd);
+
+        this.operatorLayer.active = true;
+        this.hideWaitingPanel();
     },
 
     // 加入房间
@@ -200,7 +203,7 @@ cc.Class({
         this.j_pas = this.join_password.string;
         if(this.j_room != '')
         {
-            let cmd = Rson.encode({'code':'05', 'name':'join', data:{'room':this.j_room, 'password':this.j_pas}});
+            let cmd = Rson.encode({'code':'04', 'name':'join', data:{'room':this.j_room, 'password':this.j_pas}});
             cc.log(cmd);
             cc.webSocket.send(cmd);
             this.showWaitingPanel('正在搜索房间，请稍后');
@@ -214,7 +217,7 @@ cc.Class({
 
     // 随机加入房间
     onJoinRandomRoom: function(){
-        let cmd = Rson.encode({'code':'04', 'name':'rand', data:{}});
+        let cmd = Rson.encode({'code':'05', 'name':'rand', data:{}});
         cc.log(cmd);
         cc.webSocket.send(cmd);
         this.showWaitingPanel('正在匹配房间，请稍后');

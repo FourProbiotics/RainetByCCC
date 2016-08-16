@@ -116,7 +116,7 @@ cc.Class({
                         let chesses = msg.target;
                         for(let key in chesses)
                         {
-                            let target = self.myTeam[key-1]
+                            let target = self.myTeam[chesses[key]-1]
                             self.addLBEvent(target);
                         }
                     }else if(msg.turnFinish){
@@ -234,7 +234,7 @@ cc.Class({
                     let chesses = msg.target;
                     for(let key in chesses)
                     {
-                        let target = self.enemyTeam[key-1];
+                        let target = self.enemyTeam[chesses[key]-1];
                         self.addVCEvent(target);
                     }
                 }else
@@ -283,7 +283,7 @@ cc.Class({
                     let chesses = msg.target;
                     for(let key in chesses)
                     {
-                        let target = self.enemyTeam[key-1];
+                        let target = self.enemyTeam[chesses[key]-1];
                         self.addNFEvent(target);
                     }
                 }else
@@ -463,8 +463,8 @@ cc.Class({
 
     // 给棋子加上lineboost选择事件
     addLBEvent: function(chess){
-        let chessScript = chess.getComponent('Chess');
-        chessScript.setLBEvent();
+        let chessScript = chess.node.getComponent('Chess');
+        chessScript.addLBEvent();
     },
 
     // 取消lineboost选择事件
@@ -479,8 +479,8 @@ cc.Class({
 
     // 给棋子加上viruschecker选择事件
     addVCEvent: function(chess){
-        let chessScript = chess.getComponent('Chess');
-        chessScript.setVCEvent();
+        let chessScript = chess.node.getComponent('Chess');
+        chessScript.addVCEvent();
     },
 
     // 取消viruschecker选择事件
@@ -492,8 +492,8 @@ cc.Class({
 
     // 给棋子加上404选择事件
     addNFEvent: function(chess){
-        let chessScript = chess.getComponent('Chess');
-        chessScript.setNFEvent();
+        let chessScript = chess.node.getComponent('Chess');
+        chessScript.addNFEvent();
     },
 
     // 取消404选择事件

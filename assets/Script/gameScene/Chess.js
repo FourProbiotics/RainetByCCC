@@ -134,8 +134,8 @@ var Chess = cc.Class({
         lock.setTag(10);
         this.node.addChild(lock);
 
-        this.node.on('touchend', function(event){
-            this.node.takeOff(this);
+        this.node.on('touchend', (event)=>{
+            this.node.targetOff(this);
 
             let cmd = Rson.encode({'code':'32', 'name':'LBChoose', data:{'no': this.grpNum}});
             cc.log(cmd);
@@ -149,8 +149,8 @@ var Chess = cc.Class({
         lock.setTag(10);
         this.node.addChild(lock);
 
-        this.node.on('touchend', function(event){
-            this.node.takeOff(this);
+        this.node.on('touchend', (event)=>{
+            this.node.targetOff(this);
 
             let cmd = Rson.encode({'code':'52', 'name':'VCChoose', data:{'no': this.grpNum}});
             cc.log(cmd);
@@ -164,8 +164,8 @@ var Chess = cc.Class({
         lock.setTag(10);
         this.node.addChild(lock);
 
-        this.node.on('touchend', function(event){
-            this.node.takeOff(this);
+        this.node.on('touchend', (event)=>{
+            this.node.targetOff(this);
             this.node.removeChildByTag(10);
             this.setSwitchTag();
 

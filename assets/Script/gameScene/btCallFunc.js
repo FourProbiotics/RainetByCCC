@@ -1,4 +1,5 @@
 var ChessClass = require('Chess');
+var Rson = require('Rson');
 
 cc.Class({
     extends: cc.Component,

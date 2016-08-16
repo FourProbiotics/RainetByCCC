@@ -105,19 +105,19 @@ cc.Class({
                     if(msg.test)
                     {
                         // 先取消其他侦听
-                        this.removeMyChessEvent();
-                        this.unsetPasses();
-                        this.removeEnemyChessEvent();
-                        if(this.FWListener){
-                            cc.eventManager.removeListener(this.FWListener);
-                            this.FWListener = null;
+                        self.removeMyChessEvent();
+                        self.unsetPasses();
+                        self.removeEnemyChessEvent();
+                        if(self.FWListener){
+                            cc.eventManager.removeListener(self.FWListener);
+                            self.FWListener = null;
                         }
 
                         let chesses = msg.target;
                         for(let key in chesses)
                         {
-                            let target = this.myTeam[key-1]
-                            this.addLBEvent(target);
+                            let target = self.myTeam[key-1]
+                            self.addLBEvent(target);
                         }
                     }else if(msg.turnFinish){
                         // 摘除已装备的超速回线
@@ -166,12 +166,12 @@ cc.Class({
                     if(msg.test)
                     {
                         // 先取消其他侦听
-                        this.removeMyChessEvent();
-                        this.unsetPasses();
-                        this.removeEnemyChessEvent();
-                        if(this.FWListener){
-                            cc.eventManager.removeListener(this.FWListener);
-                            this.FWListener = null;
+                        self.removeMyChessEvent();
+                        self.unsetPasses();
+                        self.removeEnemyChessEvent();
+                        if(self.FWListener){
+                            cc.eventManager.removeListener(self.FWListener);
+                            self.FWListener = null;
                         }
 
                         self.addFWEvent(msg.target);
@@ -223,12 +223,12 @@ cc.Class({
                 if(msg.test)
                 {
                     // 先取消其他侦听
-                    this.removeMyChessEvent();
-                    this.unsetPasses();
-                    this.removeEnemyChessEvent();
-                    if(this.FWListener){
-                        cc.eventManager.removeListener(this.FWListener);
-                        this.FWListener = null;
+                    self.removeMyChessEvent();
+                    self.unsetPasses();
+                    self.removeEnemyChessEvent();
+                    if(self.FWListener){
+                        cc.eventManager.removeListener(self.FWListener);
+                        self.FWListener = null;
                     }
                     
                     let chesses = msg.target;
@@ -255,7 +255,7 @@ cc.Class({
                         cc.log(msg.error);
                 }else{
                     if(msg.test)
-                        this.setVirusChecker(self.group, msg.target, msg.result);
+                        self.setVirusChecker(self.group, msg.target, msg.result);
                 }
                 
             break;
@@ -268,12 +268,12 @@ cc.Class({
                 if(msg.test)
                 {
                     // 先取消其他侦听
-                    this.removeMyChessEvent();
-                    this.unsetPasses();
-                    this.removeEnemyChessEvent();
-                    if(this.FWListener){
-                        cc.eventManager.removeListener(this.FWListener);
-                        this.FWListener = null;
+                    self.removeMyChessEvent();
+                    self.unsetPasses();
+                    self.removeEnemyChessEvent();
+                    if(self.FWListener){
+                        cc.eventManager.removeListener(self.FWListener);
+                        self.FWListener = null;
                     }
 
                     // 清空记录notfound对象的静态变量
@@ -321,8 +321,6 @@ cc.Class({
             break;
 
             case '73':
-                if(data.to != cc.UID)
-                    return;
 
                 // 棋子移动 确认
                 if(data.to == cc.UID)

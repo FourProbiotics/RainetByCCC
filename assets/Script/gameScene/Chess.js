@@ -55,25 +55,29 @@ var Chess = cc.Class({
         this.posX = x;
         this.posY = y;
         if(y == 0){
-            if(posx<=2)
-                posx = -316 + 80*x;
+            if(x<=2)
+                posx = 319 - 80*x;
+            else if(x<=5)
+                posx = 159 - 78.75*(x - 2);
             else
-                posx = 159.3 + 80*(x - 3);
+                posx = -156 - 80*(x - 6);
             posy = 325.7;
         }else if(y == 9){
-            if(posx<=2)
+            if(x<=2)
                 posx = -316 + 80*x;
+            else if(x<=5)
+                posx = -156 + 78.75*(x - 2);
             else
-                posx = 159.3 + 80*(x - 3);
+                posx = 159 + 80*(x - 6);
             posy = -328;
         }else if(y == -1){
             this.node.setLocalZOrder(1);
-            posx = -313 + 70*x;
-            posy = 380;
+            posx = -313 + 80*x;
+            posy = 370;
         }else if(y == 10){
             this.node.setLocalZOrder(1);
-            posx = -313 + 70*x;
-            posy =  -385;
+            posx = 318 - 80*x;
+            posy =  -370;
         }else{
             posx = -313 + 70*x;
             posy = 315 - 70*y;
@@ -135,12 +139,12 @@ var Chess = cc.Class({
         this.node.addChild(lock);
 
         this.node.on('touchend', (event)=>{
-            this.node.targetOff(this);
+            this.node.targetOff(this.node);
 
             let cmd = Rson.encode({'code':'32', 'name':'LBChoose', data:{'no': this.grpNum}});
             cc.log(cmd);
             cc.webSocket.send(cmd);
-        });
+        }, this.node);
     },
 
     // 添加VC选择侦听
@@ -150,40 +154,55 @@ var Chess = cc.Class({
         this.node.addChild(lock);
 
         this.node.on('touchend', (event)=>{
-            this.node.targetOff(this);
+            this.node.targetOff(this.node);
 
             let cmd = Rson.encode({'code':'52', 'name':'VCChoose', data:{'no': this.grpNum}});
             cc.log(cmd);
             cc.webSocket.send(cmd);
-        }, this);
+        }, this.node);
     },
 
     // 添加NF选择侦听
     addNFEvent: function(){
-        let lock = cc.instantiate(this.lockOn);
-        lock.setTag(10);
-        this.node.addChild(lock);
+        this.setLockTag(true);
 
         this.node.on('touchend', (event)=>{
-            this.node.targetOff(this);
+            this.node.targetOff(this.node);
             this.node.removeChildByTag(10);
             this.setSwitchTag();
 
             if(!Chess.nf_no1)
                 Chess.nf_no1 = this.grpNum;
             else if(!Chess.nf_no2)
+            {
                 Chess.nf_no2 = this.grpNum;
-            else{
                 let main = cc.find('Canvas').getComponent('HelloWorld');
                 main.showPop('switch');
             }
-        }, this);
+        }, this.node);
     },
 
     // 清除所有选中图标
     clearFocusTag: function(){
+        cc.log('清除所有选中图标');
+
+        this.hasLocked = false;
+        this.isSwitching = false;
         this.node.removeChildByTag(10);
         this.node.removeChildByTag(404);
+    },
+
+    clearAllTag: function(){
+        cc.log('清除所有图标');
+        
+        this.hasLocked = false;
+        this.hasLineBoost = false;
+        this.isSwitching = false;
+        this.checked = false;
+        this.node.removeChildByTag(10);
+        this.node.removeChildByTag(404);
+        this.node.removeChildByTag(12);
+        this.node.removeChildByTag(1);
     },
 
     // 设置/解除加速回线
@@ -241,7 +260,7 @@ var Chess = cc.Class({
     // @judge: 开关，true为开启， false为关闭
     // tag: 1
     setCheckTag: function(judge){
-        if(!this.checked == judge)
+        if(this.checked == judge)
             return;
         this.checked = judge;
 

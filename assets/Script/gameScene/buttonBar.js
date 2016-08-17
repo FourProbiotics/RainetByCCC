@@ -49,12 +49,6 @@ cc.Class({
         }
     },
 
-    onSend: function(){
-        this.hide(this.terminals);
-        this.hide(this.sys);
-
-    },
-
     leaveButton: function(){
         this.hide(this.terminals);
         this.hide(this.sys);

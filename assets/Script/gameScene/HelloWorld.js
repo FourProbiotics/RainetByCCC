@@ -19,7 +19,11 @@ cc.Class({
         bullet: cc.Prefab,
         gamestart: false,
         vnum: 0,
-        lnum: 0
+        lnum: 0,
+        lbSwitch: false,
+        nfSwitch: false,
+        fwSwitch: false,
+        vcSwitch: false,
     },
 
     // use this for initialization
@@ -93,7 +97,7 @@ cc.Class({
                     return;
 
                 // 回合结束
-                self.tuenEnd();
+                self.turnEnd();
             break;
 
             case '31':
@@ -105,33 +109,26 @@ cc.Class({
                     if(msg.test)
                     {
                         // 先取消其他侦听
-                        self.removeMyChessEvent();
-                        self.unsetPasses();
-                        self.removeEnemyChessEvent();
-                        if(self.FWListener){
-                            cc.eventManager.removeListener(self.FWListener);
-                            self.FWListener = null;
-                        }
+                        self.removeAllBoardEvent();
 
                         let chesses = msg.target;
                         for(let key in chesses)
                         {
-                            let target = self.myTeam[chesses[key]-1]
+                            let target = self.myTeam[chesses[key]-1];
                             self.addLBEvent(target);
                         }
-                    }else if(msg.turnFinish){
+                    }else{
                         // 摘除已装备的超速回线
-                        self.setLinBoost(self.group, msg.target, false);
-
+                        self.setLineBoost(self.group, msg.target, false);
                         // 回合结束
-                        self.tuenEnd();
+                        self.turnEnd();
                     }
                 }else{
                     //敌方
                     if(!msg.test)
                     {
                         // 摘除已装备的超速回线
-                        self.setLinBoost(self.enemyGroup, msg.target, false);
+                        self.setLineBoost(self.enemyGroup, msg.target, false);
                     }
                 }
                 
@@ -145,16 +142,16 @@ cc.Class({
                     if(msg.test)
                     {
                         // 装备超速回线
-                        self.setLinBoost(self.group, msg.target, true);
+                        self.setLineBoost(self.group, msg.target, true);
                         // 回合结束
-                        self.tuenEnd();
+                        self.turnEnd();
                     }else
                         cc.log(msg.error);
                 }else{
                     if(msg.test)
                     {
                         // 装备超速回线
-                        self.setLinBoost(self.enemyGroup, msg.target, true);
+                        self.setLineBoost(self.enemyGroup, msg.target, true);
                     }
                 }
             break;
@@ -166,20 +163,14 @@ cc.Class({
                     if(msg.test)
                     {
                         // 先取消其他侦听
-                        self.removeMyChessEvent();
-                        self.unsetPasses();
-                        self.removeEnemyChessEvent();
-                        if(self.FWListener){
-                            cc.eventManager.removeListener(self.FWListener);
-                            self.FWListener = null;
-                        }
+                        self.removeAllBoardEvent();
 
                         self.addFWEvent(msg.target);
                     }else{
                         // 移除己方现有防火墙
                         self.setFireWall(self.group, msg.target['x'], msg.target['y'], false);
                         // 回合结束
-                        self.tuenEnd();
+                        self.turnEnd();
                     }
                 }else{
                     if(!msg.test)
@@ -201,7 +192,7 @@ cc.Class({
                         // 添加wall
                         self.setFireWall(self.group, msg.target['x'], msg.target['y'], true);
                         // 回合结束
-                        self.tuenEnd();
+                        self.turnEnd();
 
                     }else
                         cc.log(msg.error);
@@ -223,13 +214,7 @@ cc.Class({
                 if(msg.test)
                 {
                     // 先取消其他侦听
-                    self.removeMyChessEvent();
-                    self.unsetPasses();
-                    self.removeEnemyChessEvent();
-                    if(self.FWListener){
-                        cc.eventManager.removeListener(self.FWListener);
-                        self.FWListener = null;
-                    }
+                    self.removeAllBoardEvent();
                     
                     let chesses = msg.target;
                     for(let key in chesses)
@@ -250,7 +235,7 @@ cc.Class({
                     {
                         self.setVirusChecker(self.enemyGroup, msg.target, msg.result);
                         // 回合结束
-                        self.tuenEnd();
+                        self.turnEnd();
                     }else
                         cc.log(msg.error);
                 }else{
@@ -268,13 +253,7 @@ cc.Class({
                 if(msg.test)
                 {
                     // 先取消其他侦听
-                    self.removeMyChessEvent();
-                    self.unsetPasses();
-                    self.removeEnemyChessEvent();
-                    if(self.FWListener){
-                        cc.eventManager.removeListener(self.FWListener);
-                        self.FWListener = null;
-                    }
+                    self.removeAllBoardEvent();
 
                     // 清空记录notfound对象的静态变量
                     ChessClass.nf_no1 = null;
@@ -283,7 +262,7 @@ cc.Class({
                     let chesses = msg.target;
                     for(let key in chesses)
                     {
-                        let target = self.enemyTeam[chesses[key]-1];
+                        let target = self.myTeam[chesses[key]-1];
                         self.addNFEvent(target);
                     }
                 }else
@@ -299,7 +278,7 @@ cc.Class({
                     {
                         self.switchChess(self.group, msg.no1, msg.no2, msg.check);
                         // 回合结束
-                        self.tuenEnd();
+                        self.turnEnd();
                     }else
                         cc.log(msg.error);
                 }else{
@@ -330,10 +309,26 @@ cc.Class({
                         let result = msg.result;
                         self.moveChess(self.group, msg.target, result['x'], result['y']);
                         // 若移动模式为进攻（吃了别的棋子）则移除掉对应棋子
-                        if(result['type']==2)
+                        if(result['type']==2){
+                            let script = self.enemyTeam[result['eno']-1].getComponent('Chess');
+                            script.clearAllTag();
+                            script.changeType(result['etype']);
+
                             self.moveChess(self.enemyGroup, result['eno'], result['ex'], result['ey']);
+                        }
+                        // 若是移入database
+                        if(result['type']==3){
+                            if(result['moveLB'])
+                            {
+                                self.lbSwitch = false;
+                                
+                                let btCallFunc = cc.find('Canvas').getComponent('btCallFunc');
+                                btCallFunc.fwOpen = false;
+                                btCallFunc.fw.color = new cc.Color(255, 255, 255);
+                            }
+                        }
                         // 回合结束
-                        self.tuenEnd();
+                        self.turnEnd();
                     }else
                         cc.log(msg.error);
                 }else{
@@ -342,8 +337,17 @@ cc.Class({
                         let result = msg.result;
                         self.moveChess(self.enemyGroup, msg.target, 9-result['x'], 9-result['y']);
                         // 若移动模式为进攻（吃了别的棋子）则移除掉对应棋子
-                        if(result['type']==2)
-                            self.moveChess(self.group, result['eno'], 9-result['ex'],9- result['ey']);
+                        if(result['type']==2){
+                            self.moveChess(self.group, result['eno'], 9-result['ex'],9-result['ey']);
+                            if(result['moveLB'])
+                            {
+                                self.lbSwitch = false;
+
+                                let btCallFunc = cc.find('Canvas').getComponent('btCallFunc');
+                                btCallFunc.fwOpen = false;
+                                btCallFunc.fw.color = new cc.Color(255, 255, 255);
+                            }
+                        }
                     }
                 }
             break;
@@ -359,7 +363,7 @@ cc.Class({
                 // 游戏结束
                 if(msg.winner == cc.UID)
                 {
-                    self.setTips('一切都是，\n命运石之门的选择！');
+                    self.setTips("一切都是，\n命运石之门的选择！");
                 }else{
                     self.setTips('失败了失败了失败了失败了失败了失败了失败了失败了失败了');
                 }
@@ -421,9 +425,9 @@ cc.Class({
             let chess = node.getComponent('Chess');
             let call = (event)=>{
                 // 目标选择完毕后发送消息给服务器
-                this.sendData({'code':'70', 'name':'setted', data:{'no': chess.grpNum}});
+                this.sendData({'code':'70', 'name':'get move target', data:{'no': chess.grpNum}});
             }
-            node.on(cc.Node.EventType.TOUCH_END, call, this.node);
+            node.on(cc.Node.EventType.TOUCH_END, call, node);
         }
     },
 
@@ -445,7 +449,7 @@ cc.Class({
             let chess = this.myTeam[key].node;
             let script = chess.getComponent('Chess');
 
-            chess.targetOff(this.node);
+            chess.targetOff(chess);
             script.clearFocusTag();
         }
     },
@@ -453,10 +457,10 @@ cc.Class({
     // 移除敌方棋子上的侦听
     removeEnemyChessEvent: function(){
         for(let key in this.enemyTeam){
-            let chess = this.myTeam[key].node;
+            let chess = this.enemyTeam[key].node;
             let script = chess.getComponent('Chess');
 
-            chess.targetOff(this.node);
+            chess.targetOff(chess);
             script.clearFocusTag();
         }
     },
@@ -505,20 +509,21 @@ cc.Class({
 
     // 给棋盘加上firewall选择事件
     addFWEvent: function(limits){
+        cc.log('添加fw选择事件');
+
         this.FWListener = {
             event: cc.EventListener.TOUCH_ONE_BY_ONE,
-            onTouchBegan: function (touch, event) {
-                return true; //这里必须要写 return true
-            },
+            onTouchBegan: function (touch, event) {return true; /*这里必须要写 return true*/},
+
             onTouchEnded: function (touch, event) {
                 let pos = self.getBoardXY(touch.getLocation());
-                cc.log(pos);
+                cc.log('addFWEvent pos: ', pos);
 
                 if(pos)
                 {
+                    let flag = true;
                     for(let i in limits) {
                         let limitPos = limits[i];
-                        let flag = true;
                         if(pos.x==limitPos['x'] && pos.y == limitPos['y'])
                         {
                             flag = false;
@@ -529,25 +534,38 @@ cc.Class({
                     if(flag){
                         // 建立wall
                         // 取消侦听
-                        cc.eventManager.removeListener(this);
-                        this.sendData({'code':'42', 'name':'fireWall', data:{'x':pos.x, 'y':pos.y}});
+                        cc.eventManager.removeListener(this);cc.log('移除fw侦听');
+                        self.sendData({'code':'42', 'name':'fireWall', data:{'x':pos.x, 'y':pos.y}});
                     }
                 }
             }
-        }
+        };
         // 绑定单点触摸事件
-        cc.eventManager.addListener(this.FWListener, this.node);
+        cc.eventManager.addListener(this.FWListener, this.checkboard.node);
     },
 
     // 解除fire wall事件侦听
     removeFWEvent:function(){
         if(this.FWListener){
-            cc.eventManager.removeListener(this.FWListener);
+            cc.eventManager.removeListener(this.FWListener);cc.log('移除fw侦听');
             this.FWListener = null;
         }
         this.removeEnemyChessEvent();
         this.removeMyChessEvent();
         this.addChessChooseEvent();
+    },
+
+    // 移除当前棋盘所有侦听
+    removeAllBoardEvent: function(){
+        cc.log('移除当前棋盘所有侦听');
+
+        if(this.FWListener){
+            cc.eventManager.removeListener(this.FWListener);cc.log('移除fw侦听');
+            this.FWListener = null;
+        }
+        this.removeEnemyChessEvent();
+        this.removeMyChessEvent();
+        this.unsetPasses();
     },
 
 
@@ -564,8 +582,7 @@ cc.Class({
         if(type == 'G'){
             this.checkboard.spriteFrame = cc.Tex1.getSpriteFrame('checkboard1');
             this.stateBar.spriteFrame = cc.Tex1.getSpriteFrame('stateBar1');
-        }
-        else{
+        }else{
             this.checkboard.spriteFrame = cc.Tex1.getSpriteFrame('checkboard2');
             this.stateBar.spriteFrame = cc.Tex1.getSpriteFrame('stateBar2');
         }
@@ -651,21 +668,35 @@ cc.Class({
 
         var c1Script = chess1.getComponent('Chess'), c2Script = chess2.getComponent('Chess');
         var pos1 = chess1.getPosition(), pos2 = chess2.getPosition();
-        var seq1, seq2, func1, func2;
-        // 回调函数用以去掉switch标记并重置敌方棋子至背面
+        var seq1, seq2, func1, func2, lbSet1=false, lbSet2=false;
+
+        // 记录两枚棋子装备lineboost的状况
+        if(isSwitch)
+        {
+            if(c1Script.hasLineBoost)
+                lbSet2=true;
+            else if(c2Script.hasLineBoost)
+                lbSet1=true;
+        }
+
+        // 回调函数用以去掉switch标记并重置敌方棋子至背面并设置line boost交换情况
         func1 = cc.callFunc(()=>{
             c1Script.setSwitchTag(false); 
             if(this.group!=group)
                 c1Script.changeType('bottom');
             else
                 c1Script.setCheckTag(false);
+            
+            c1Script.setLineBoost(lbSet1);
         }, this);
         func2 = cc.callFunc(()=>{
-            c2Script.setSwitchTag(false); 
+            c2Script.setSwitchTag(false);
             if(this.group!=group)
                 c2Script.changeType('bottom');
             else
                 c1Script.setCheckTag(false);
+
+            c2Script.setLineBoost(lbSet2);
         }, this);
 
         if(isSwitch){
@@ -680,9 +711,13 @@ cc.Class({
         mass.setPosition(0, 0);
         chess1.runAction(seq1);
         chess2.runAction(seq2);
-        // 若是我方触发则发送事件给服务端
+        
         if(this.group==group)
-        this.sendData({'code':'62', 'name':'404 not found', data:{'no1':ChessClass.nf_no1, 'no2':ChessClass.nf_no2, 'check':isSwitch}});
+        {
+            // 若是我方则设置nfSwitch为true
+            this.nfSwitch = true;
+        }
+
     },
 
     // 实现棋子移动
@@ -699,13 +734,15 @@ cc.Class({
     // @group: 组别
     // @c: 指定的棋子
     // @isSwitch: 开启还是关闭
-    setLinBoost: function(group, c, isSwitch){
+    setLineBoost: function(group, c, isSwitch){
         var chess;
         if(this.group == group)
             chess = this.myTeam[c-1].node.getComponent('Chess');
         else
             chess = this.enemyTeam[c-1].node.getComponent('Chess');
-        chess.setLinBoost(isSwitch);
+        if(group == this.group)
+            this.lbSwitch = isSwitch;
+        chess.setLineBoost(isSwitch);
     },
 
     // 防火墙效果
@@ -715,6 +752,9 @@ cc.Class({
     setFireWall: function(group, bx, by, isSwitch){
         var board = this.checkboard.node;
         let block = cc.find('line'+by+'/block'+bx, board);
+
+        if(group == this.group)
+            this.fwSwitch = isSwitch;
         block.getComponent('block').setFireWall(isSwitch, group);
     },
 
@@ -728,8 +768,10 @@ cc.Class({
         
         if(group==this.group)
             chess.setCheckTag(true);
-        else
+        else{
             chess.changeType(type);
+            this.vcSwitch = true;
+        }
     },
 
     // 可通过效果
@@ -762,10 +804,16 @@ cc.Class({
         {
             for(let j = 1;j <= 8;j++)
             {
-                cc.log('关闭效果', 'line'+i+'/block'+j);
                 let block = cc.find('line'+i+'/block'+j, this.checkboard.node).getComponent('block');
                 block.setCanPass(false);
             }
+        }
+        for(let k = 1;k<=2;k++)
+        {
+            let block0 = cc.find('line0/block'+k, this.checkboard.node).getComponent('block');
+            block0.setCanPass(false);
+            let block9 = cc.find('line9/block'+k, this.checkboard.node).getComponent('block');
+            block9.setCanPass(false);
         }
     },
 
@@ -792,7 +840,7 @@ cc.Class({
                 bullet.color = cc.color(0, 0, 255);
             break;
             case 'V':
-                bullet.color = cc.color(220, 220, 220);
+                bullet.color = cc.color(168, 168, 168);
             break;
         }
         var seq = cc.sequence(cc.moveBy(time, -winWidth - bullet.width, 0), cc.callFunc(()=>{bullet.removeFromParent();}));
@@ -823,18 +871,13 @@ cc.Class({
     },
 
     // 回合结束时处理所有侦听
-    tuenEnd:function()
+    turnEnd:function()
     {
         cc.log('回合结束');
         this.setTips('对手的回合');
-        this.removeMyChessEvent();
-        this.unsetPasses();
-        this.removeEnemyChessEvent();
+        this.removeAllBoardEvent();
         this.removeTerminalChoose();
-        if(this.FWListener){
-            cc.eventManager.removeListener(this.FWListener);
-            this.FWListener = null;
-        }
+
         this.sendData({'code':'91', 'name':'turnEnd', data:{}});
     }
 });

@@ -8527,6 +8527,7 @@
     "hasLineBoost": false,
     "hasLocked": false,
     "isSwitching": false,
+    "checked": false,
     "lockOn": {
       "__uuid__": "b299cfa3-00dc-4972-b1f5-38837b6e0f68"
     },
@@ -8650,6 +8651,7 @@
     "hasLineBoost": false,
     "hasLocked": false,
     "isSwitching": false,
+    "checked": false,
     "lockOn": {
       "__uuid__": "b299cfa3-00dc-4972-b1f5-38837b6e0f68"
     },
@@ -8773,6 +8775,7 @@
     "hasLineBoost": false,
     "hasLocked": false,
     "isSwitching": false,
+    "checked": false,
     "lockOn": {
       "__uuid__": "b299cfa3-00dc-4972-b1f5-38837b6e0f68"
     },
@@ -8896,6 +8899,7 @@
     "hasLineBoost": false,
     "hasLocked": false,
     "isSwitching": false,
+    "checked": false,
     "lockOn": {
       "__uuid__": "b299cfa3-00dc-4972-b1f5-38837b6e0f68"
     },
@@ -9019,6 +9023,7 @@
     "hasLineBoost": false,
     "hasLocked": false,
     "isSwitching": false,
+    "checked": false,
     "lockOn": {
       "__uuid__": "b299cfa3-00dc-4972-b1f5-38837b6e0f68"
     },
@@ -9142,6 +9147,7 @@
     "hasLineBoost": false,
     "hasLocked": false,
     "isSwitching": false,
+    "checked": false,
     "lockOn": {
       "__uuid__": "b299cfa3-00dc-4972-b1f5-38837b6e0f68"
     },
@@ -9265,6 +9271,7 @@
     "hasLineBoost": false,
     "hasLocked": false,
     "isSwitching": false,
+    "checked": false,
     "lockOn": {
       "__uuid__": "b299cfa3-00dc-4972-b1f5-38837b6e0f68"
     },
@@ -9388,6 +9395,7 @@
     "hasLineBoost": false,
     "hasLocked": false,
     "isSwitching": false,
+    "checked": false,
     "lockOn": {
       "__uuid__": "b299cfa3-00dc-4972-b1f5-38837b6e0f68"
     },
@@ -9585,6 +9593,7 @@
     "hasLineBoost": false,
     "hasLocked": false,
     "isSwitching": false,
+    "checked": false,
     "lockOn": {
       "__uuid__": "b299cfa3-00dc-4972-b1f5-38837b6e0f68"
     },
@@ -9710,6 +9719,7 @@
     "hasLineBoost": false,
     "hasLocked": false,
     "isSwitching": false,
+    "checked": false,
     "lockOn": {
       "__uuid__": "b299cfa3-00dc-4972-b1f5-38837b6e0f68"
     },
@@ -9835,6 +9845,7 @@
     "hasLineBoost": false,
     "hasLocked": false,
     "isSwitching": false,
+    "checked": false,
     "lockOn": {
       "__uuid__": "b299cfa3-00dc-4972-b1f5-38837b6e0f68"
     },
@@ -9960,6 +9971,7 @@
     "hasLineBoost": false,
     "hasLocked": false,
     "isSwitching": false,
+    "checked": false,
     "lockOn": {
       "__uuid__": "b299cfa3-00dc-4972-b1f5-38837b6e0f68"
     },
@@ -10085,6 +10097,7 @@
     "hasLineBoost": false,
     "hasLocked": false,
     "isSwitching": false,
+    "checked": false,
     "lockOn": {
       "__uuid__": "b299cfa3-00dc-4972-b1f5-38837b6e0f68"
     },
@@ -10210,6 +10223,7 @@
     "hasLineBoost": false,
     "hasLocked": false,
     "isSwitching": false,
+    "checked": false,
     "lockOn": {
       "__uuid__": "b299cfa3-00dc-4972-b1f5-38837b6e0f68"
     },
@@ -10335,6 +10349,7 @@
     "hasLineBoost": false,
     "hasLocked": false,
     "isSwitching": false,
+    "checked": false,
     "lockOn": {
       "__uuid__": "b299cfa3-00dc-4972-b1f5-38837b6e0f68"
     },
@@ -10460,6 +10475,7 @@
     "hasLineBoost": false,
     "hasLocked": false,
     "isSwitching": false,
+    "checked": false,
     "lockOn": {
       "__uuid__": "b299cfa3-00dc-4972-b1f5-38837b6e0f68"
     },
@@ -12837,7 +12853,7 @@
     },
     "_enabled": true,
     "_useOriginalSize": false,
-    "_actualFontSize": 40,
+    "_actualFontSize": 20,
     "_fontSize": 20,
     "_lineHeight": 40,
     "_enableWrapText": false,
@@ -12937,10 +12953,10 @@
   {
     "__type__": "cc.ClickEvent",
     "target": {
-      "__id__": 408
+      "__id__": 2
     },
-    "component": "buttonBar",
-    "handler": "onSend"
+    "component": "btCallFunc",
+    "handler": "onSendTalk"
   },
   {
     "__type__": "cc.Node",
@@ -15069,7 +15085,11 @@
     },
     "gamestart": false,
     "vnum": 0,
-    "lnum": 0
+    "lnum": 0,
+    "lbSwitch": false,
+    "nfSwitch": false,
+    "fwSwitch": false,
+    "vcSwitch": false
   },
   {
     "__type__": "cea24OjCNNATr3bocY3ubHl",
@@ -15078,6 +15098,10 @@
     "node": {
       "__id__": 2
     },
-    "_enabled": true
+    "_enabled": true,
+    "lbOpen": false,
+    "fwOpen": false,
+    "vcOpen": false,
+    "nfOpen": false
   }
 ]

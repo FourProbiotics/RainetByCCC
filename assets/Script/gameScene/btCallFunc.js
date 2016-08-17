@@ -25,53 +25,86 @@ cc.Class({
 
     onLineBoost: function(){
         this.hide(this.terminals);
-        if(!this.lbOpen){
-            this.sendData({'code':'30', 'name':'start LB', data:{}});
-            this.lbOpen = true;
-            this.lb.color = new cc.Color(198, 198, 198);
+
+        if(!this.canvas.lbSwitch)
+        {
+            if(!this.lbOpen){
+                this.canvas.removeAllBoardEvent();
+
+                this.sendData({'code':'30', 'name':'start LB', data:{}});
+                this.lbOpen = true;
+                this.lb.color = new cc.Color(128, 128, 128);
+            }else{
+                this.lbOpen = false;
+                this.canvas.removeLBEvent();
+                this.lb.color = new cc.Color(255, 255, 255);
+            }
         }else{
+            this.sendData({'code':'30', 'name':'start LB', data:{}});
             this.lbOpen = false;
-            this.canvas.removeLBEvent();
             this.lb.color = new cc.Color(255, 255, 255);
         }
     },
 
     onFireWall: function(){
         this.hide(this.terminals);
-        if(!this.fwOpen){
-            this.sendData({'code':'40', 'name':'start FW', data:{}});
-            this.fwOpen = true;
-            this.fw.color = new cc.Color(198, 198, 198);
+
+        if(!this.canvas.fwSwitch)
+        {
+            if(!this.fwOpen){
+                this.canvas.removeAllBoardEvent();
+                
+                this.sendData({'code':'40', 'name':'start FW', data:{}});
+                this.fwOpen = true;
+                this.fw.color = new cc.Color(128, 128, 128);
+            }else{
+                this.fwOpen = false;
+                this.canvas.removeFWEvent();
+                this.fw.color = new cc.Color(255, 255, 255);
+            }
         }else{
+            this.sendData({'code':'40', 'name':'start FW', data:{}});
             this.fwOpen = false;
-            this.canvas.removeFWEvent();
             this.fw.color = new cc.Color(255, 255, 255);
         }
+        
     },
 
     onVirusChecker: function(){
         this.hide(this.terminals);
-        if(!this.vcOpen){
-            this.sendData({'code':'50', 'name':'start VC', data:{}});
-            this.vcOpen = true;
-            this.vc.color = new cc.Color(198, 198, 198);
-        }else{
-            this.vcOpen = false;
-            this.canvas.removeVCEvent();
-            this.vc.color = new cc.Color(255, 255, 255);
+
+        if(!this.canvas.vcSwitch)
+        {
+            if(!this.vcOpen){
+                this.canvas.removeAllBoardEvent();
+
+                this.sendData({'code':'50', 'name':'start VC', data:{}});
+                this.vcOpen = true;
+                this.vc.color = new cc.Color(128, 128, 128);
+            }else{
+                this.vcOpen = false;
+                this.canvas.removeVCEvent();
+                this.vc.color = new cc.Color(255, 255, 255);
+            }
         }
     },
 
     onNotFound: function(){
         this.hide(this.terminals);
-        if(!this.nfOpen){
-            this.sendData({'code':'60', 'name':'start NF', data:{}});
-            this.nfOpen = true;
-            this.nf.color = new cc.Color(198, 198, 198);
-        }else{
-            this.nfOpen = false;
-            this.canvas.removeNFEvent();
-            this.nf.color = new cc.Color(255, 255, 255);
+
+        if(!this.canvas.nfSwitch)
+        {
+            if(!this.nfOpen){
+                this.canvas.removeAllBoardEvent();
+
+                this.sendData({'code':'60', 'name':'start NF', data:{}});
+                this.nfOpen = true;
+                this.nf.color = new cc.Color(128, 128, 128);
+            }else{
+                this.nfOpen = false;
+                this.canvas.removeNFEvent();
+                this.nf.color = new cc.Color(255, 255, 255);
+            }
         }
     },
 

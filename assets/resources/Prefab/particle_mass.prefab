@@ -73,6 +73,9 @@
     "_file": {
       "__uuid__": "8f34aa50-d136-4aa3-acb2-dd75f9cd4b84"
     },
+    "_texture": {
+      "__uuid__": "8f34aa50-d136-4aa3-acb2-dd75f9cd4b84"
+    },
     "_srcBlendFactor": 770,
     "_dstBlendFactor": 1,
     "playOnLoad": true,
@@ -150,7 +153,7 @@
     "_endRadiusVar": 0,
     "_rotatePerS": 0,
     "_rotatePerSVar": 0,
-    "_N$preview": true
+    "_N$preview": false
   },
   {
     "__type__": "cc.PrefabInfo",

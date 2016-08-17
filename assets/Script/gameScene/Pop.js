@@ -72,12 +72,12 @@ cc.Class({
         this.hide();
         let main = cc.find('Canvas').getComponent('HelloWorld');
         main.removeNFEvent();
-        main.swithChess(main.group, ChessClass.nf_no1, ChessClass.nf_no2, true);
+        main.sendData({'code':'62', 'name':'change start', data:{'no1':ChessClass.nf_no1, 'no2':ChessClass.nf_no2, 'check':true}});
     },
 
     onSwitchNo: function(){
         this.hide();
         let main = cc.find('Canvas').getComponent('HelloWorld');
-        main.swithChess(main.group, ChessClass.nf_no1, ChessClass.nf_no2, false);
+        main.sendData({'code':'62', 'name':'change start', data:{'no1':ChessClass.nf_no1, 'no2':ChessClass.nf_no2, 'check':false}});
     }
 });

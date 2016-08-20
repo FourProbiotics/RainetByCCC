@@ -551,6 +551,7 @@ cc.Class({
                         // 建立wall
                         // 取消侦听
                         cc.eventManager.removeListener(this);cc.log('移除fw侦听');
+                        this.FWListener = null;
                         self.sendData({'code':'42', 'name':'fireWall', data:{'x':pos.x, 'y':pos.y}});
                     }
                 }
@@ -597,7 +598,7 @@ cc.Class({
         this.group = type;
         if(type == 'G'){
             this.checkboard.spriteFrame = cc.Tex1.getSpriteFrame('checkboard1');
-            // this.stateBar.spriteFrame = cc.Tex1.getSpriteFrame('stateBar1');
+            this.stateBar.spriteFrame = cc.Tex1.getSpriteFrame('stateBar1');
         }else{
             this.checkboard.spriteFrame = cc.Tex1.getSpriteFrame('checkboard2');
             this.stateBar.spriteFrame = cc.Tex1.getSpriteFrame('stateBar2');

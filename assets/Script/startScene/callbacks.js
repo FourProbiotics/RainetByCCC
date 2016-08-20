@@ -144,7 +144,7 @@ cc.Class({
 
     onWSClose: function(event){
         cc.log('websocket will close');
-        let cmd = Rson.encode({'code':'09', 'name':'logOut', data:{}});
+        let cmd = Rson.encode({'code':'09', 'name':'exit', data:{}});
         cc.log(cmd);
         cc.webSocket.send(cmd);
     },

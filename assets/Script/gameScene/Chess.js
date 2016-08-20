@@ -63,6 +63,7 @@ var Chess = cc.Class({
                 posx = -156 - 80*(x - 6);
             posy = 325.7;
         }else if(y == 9){
+            x = 9-x;
             if(x<=2)
                 posx = -316 + 80*x;
             else if(x<=5)
@@ -72,12 +73,14 @@ var Chess = cc.Class({
             posy = -328;
         }else if(y == -1){
             this.node.setLocalZOrder(1);
-            posx = -313 + 80*x;
-            posy = 370;
+            // posx = -313 + 80*x;
+            // posy = 370;
+            posx = 0;posy = 500;
         }else if(y == 10){
             this.node.setLocalZOrder(1);
-            posx = 318 - 80*x;
-            posy =  -370;
+            // posx = 318 - 80*x;
+            // posy =  -370;
+            posx = 0;posy = -500;
         }else{
             posx = -313 + 70*x;
             posy = 315 - 70*y;
@@ -134,9 +137,7 @@ var Chess = cc.Class({
 
     // 添加LB选择侦听
     addLBEvent: function(){
-        let lock = cc.instantiate(this.lockOn);
-        lock.setTag(10);
-        this.node.addChild(lock);
+        this.setLockTag(true);
 
         this.node.on('touchend', (event)=>{
             this.node.targetOff(this.node);
@@ -149,9 +150,7 @@ var Chess = cc.Class({
 
     // 添加VC选择侦听
     addVCEvent: function(){
-        let lock = cc.instantiate(this.lockOn);
-        lock.setTag(10);
-        this.node.addChild(lock);
+        this.setLockTag(true);
 
         this.node.on('touchend', (event)=>{
             this.node.targetOff(this.node);
@@ -168,8 +167,8 @@ var Chess = cc.Class({
 
         this.node.on('touchend', (event)=>{
             this.node.targetOff(this.node);
-            this.node.removeChildByTag(10);
-            this.setSwitchTag();
+            this.setLockTag(false);
+            this.setSwitchTag(true);
 
             if(!Chess.nf_no1)
                 Chess.nf_no1 = this.grpNum;
@@ -186,29 +185,24 @@ var Chess = cc.Class({
     clearFocusTag: function(){
         cc.log('清除所有选中图标');
 
-        this.hasLocked = false;
-        this.isSwitching = false;
-        this.node.removeChildByTag(10);
-        this.node.removeChildByTag(404);
+        this.setLockTag(false);
+        this.setSwitchTag(false);
     },
 
     clearAllTag: function(){
         cc.log('清除所有图标');
         
-        this.hasLocked = false;
-        this.hasLineBoost = false;
-        this.isSwitching = false;
-        this.checked = false;
-        this.node.removeChildByTag(10);
-        this.node.removeChildByTag(404);
-        this.node.removeChildByTag(12);
-        this.node.removeChildByTag(1);
+        this.setLockTag(false);
+        this.setSwitchTag(false);
+        this.setCheckTag(false);
+        this.setLineBoost(false);
     },
 
     // 设置/解除加速回线
     // @judge: 加速回线的开关，true为开启， false为关闭
     // tag: 12
     setLineBoost: function(judge){
+        cc.log('setLineBoost', judge, this.hasLineBoost);
         if(judge && !this.hasLineBoost){
             this.hasLineBoost = true;
             let lb = cc.instantiate(this.lineBoost);
@@ -226,6 +220,7 @@ var Chess = cc.Class({
     // @judge: 锁定开关，true为开启， false为关闭
     // tag: 10
     setLockTag: function(judge){
+        cc.log('setLockTag', judge, this.hasLocked);
         if(judge && !this.hasLocked){
             this.hasLocked = true;
             let lock = cc.instantiate(this.lockOn);
@@ -243,6 +238,7 @@ var Chess = cc.Class({
     // @judge: 锁定开关，true为开启， false为关闭
     // tag: 404
     setSwitchTag: function(judge){
+        cc.log('setSwitchTag', judge, this.isSwitching);
         if(judge && !this.isSwitching){
             this.isSwitching = true;
             let switchTag = cc.instantiate(this.switchTag);
@@ -260,6 +256,7 @@ var Chess = cc.Class({
     // @judge: 开关，true为开启， false为关闭
     // tag: 1
     setCheckTag: function(judge){
+        cc.log('setCheckTag', judge, this.checked);
         if(this.checked == judge)
             return;
         this.checked = judge;

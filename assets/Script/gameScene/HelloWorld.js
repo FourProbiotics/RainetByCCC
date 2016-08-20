@@ -24,6 +24,7 @@ cc.Class({
         nfSwitch: false,
         fwSwitch: false,
         vcSwitch: false,
+        reConnect: false
     },
 
     // use this for initialization
@@ -48,7 +49,7 @@ cc.Class({
 
         // 更改响应回调函数
         cc.webSocket.onmessage = this.onWSMsg;
-        
+        cc.webSocket.onclose = this.onWSClose;
     },
 
     // 战斗时websocket回调
@@ -60,9 +61,10 @@ cc.Class({
         switch(data.code){
             case '21':
                 // 游戏开始
+                self.room = msg.room;
                 self.setRoom(msg.room);
                 self.setPlayerNames(msg.myName, msg.enemyName);
-                self.setScores(msg.myScore, msg.enemyScore);
+                // self.setScores(msg.myScore, msg.enemyScore);
                 self.group = msg.group;
                 self.enemyGroup = msg.group=='G'?'B':(msg.group=='B'?'G':null);
                 self.changeMap(msg.group);
@@ -310,10 +312,12 @@ cc.Class({
                         self.moveChess(self.group, msg.target, result['x'], result['y']);
                         // 若移动模式为进攻（吃了别的棋子）则移除掉对应棋子
                         if(result['type']==2){
+
                             let script = self.enemyTeam[result['eno']-1].getComponent('Chess');
                             script.clearAllTag();
                             script.changeType(result['etype']);
-
+                            self.setCaptureState(self.group, result['captureL'], result['captureV']);
+                            
                             self.moveChess(self.enemyGroup, result['eno'], result['ex'], result['ey']);
                         }
                         // 若是移入database
@@ -326,6 +330,9 @@ cc.Class({
                                 btCallFunc.fwOpen = false;
                                 btCallFunc.fw.color = new cc.Color(255, 255, 255);
                             }
+
+                            let script = self.myTeam[result['no']-1].getComponent('Chess');
+                            script.clearAllTag();
                         }
                         // 回合结束
                         self.turnEnd();
@@ -338,6 +345,7 @@ cc.Class({
                         self.moveChess(self.enemyGroup, msg.target, 9-result['x'], 9-result['y']);
                         // 若移动模式为进攻（吃了别的棋子）则移除掉对应棋子
                         if(result['type']==2){
+                            self.setCaptureState(self.enemyGroup, result['captureL'], result['captureV']);
                             self.moveChess(self.group, result['eno'], 9-result['ex'],9-result['ey']);
                             if(result['moveLB'])
                             {
@@ -347,6 +355,9 @@ cc.Class({
                                 btCallFunc.fwOpen = false;
                                 btCallFunc.fw.color = new cc.Color(255, 255, 255);
                             }
+                        }else if(result['type']==3){
+                            let script = self.enemyTeam[result['no']-1].getComponent('Chess');
+                            script.clearAllTag();
                         }
                     }
                 }
@@ -369,6 +380,11 @@ cc.Class({
                 }
             break;
         }
+    },
+
+    // 战斗场景ws关闭回调
+    onWSClose: function(event){
+        ;
     },
 
     // 给己方棋子添加身份变化事件
@@ -581,7 +597,7 @@ cc.Class({
         this.group = type;
         if(type == 'G'){
             this.checkboard.spriteFrame = cc.Tex1.getSpriteFrame('checkboard1');
-            this.stateBar.spriteFrame = cc.Tex1.getSpriteFrame('stateBar1');
+            // this.stateBar.spriteFrame = cc.Tex1.getSpriteFrame('stateBar1');
         }else{
             this.checkboard.spriteFrame = cc.Tex1.getSpriteFrame('checkboard2');
             this.stateBar.spriteFrame = cc.Tex1.getSpriteFrame('stateBar2');
@@ -635,23 +651,24 @@ cc.Class({
     // 设置玩家分数
     // @myName: 己方分数
     // @enemyName: 对方分数
-    setScores: function(myScore, enemyScore){
+    /*setScores: function(myScore, enemyScore){
         var label1 = cc.find('myScore', this.stateBar).getComponent(cc.Label);
         var label2 = cc.find('enemyScore', this.stateBar).getComponent(cc.Label);
         label1.string = myScore;
         label2.string = enemyScore;
-    },
+    },*/
 
     // 设置终端卡剩余状态显示
-    // @state: 终端卡字符串
-    // @player: 指定我方或对方，我方为true，对方为false
-    setTerminalState(state, player){
+    // @group: 组别
+    // @cl: 捕获的link数
+    // @cv: 捕获的virus数
+    setCaptureState(group, cl, cv){
         var label;
-        if(player)
+        if(this.group == group)
             label = cc.find('myTerminalState', this.stateBar).getComponent(cc.Label);
         else
             label = cc.find('enemyTerminalState', this.stateBar).getComponent(cc.Label);
-        label.string = state;
+        label.string = '捕获 Link: '+cl+' Virus: '+cv;
     },
 
     // 实现交换效果
@@ -851,9 +868,29 @@ cc.Class({
 
     // 发送消息给服务端
     sendData: function(cmd){
-        cmd = Rson.encode(cmd);
-        cc.log(cmd);
-        cc.webSocket.send(cmd);
+
+        // 若连接中断则重连后再发送消息
+        if (cc.webSocket.readyState !== WebSocket.OPEN) {
+            cc.webSocket.close();
+            this.initWebSocket();
+            setTimeout(function() {
+                self.sendData(cmd);
+            }, 500);
+        } else {
+            if(this.reConnect)
+            {
+                this.reConnect = false;
+                // 将验证信息与原本要发送的数据打包传给服务器
+                let rcmd = {'code':'120', 'name':'reconnect', 
+                data:{'power':cc.sys.localStorage.getItem('power'), 'room':this.room, 'send':Rson.encode(cmd)}};
+                cc.log(rcmd);
+                cc.webSocket.send(rcmd);
+                return;
+            }
+            cmd = Rson.encode(cmd);
+            cc.log(cmd);
+            cc.webSocket.send(cmd);
+        };
     },
 
     // 将点击坐标转化为棋盘坐标
@@ -868,6 +905,16 @@ cc.Class({
             return cc.p(boardX, boardY);
         else
             return null;
+    },
+
+    // 重新初始化websocket
+    initWebSocket: function() {
+        cc.log('重新连接服务器');
+        this.reConnect = true;
+        if (cc.webSocket) {
+            cc.webSocket = new WebSocket("ws://121.42.170.78:12345");
+            cc.webSocket.onmessage = this.onWSMsg;
+        }
     },
 
     // 回合结束时处理所有侦听

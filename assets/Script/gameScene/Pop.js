@@ -35,6 +35,13 @@ cc.Class({
                 this.popYes.on(cc.Node.EventType.TOUCH_END, this.onSwitchYes, this);
                 this.popNo.on(cc.Node.EventType.TOUCH_END, this.onSwitchNo, this);
             break;
+            case 'wsclose':
+                this.label.string = '与服务器断开连接，是否重连？';
+                this.yesLabel.string = '重连';
+                this.noLabel.string = '不重连';
+                this.popYes.on(cc.Node.EventType.TOUCH_END, this.onConnectYes, this);
+                this.popNo.on(cc.Node.EventType.TOUCH_END, this.onConnectNo, this);
+            break;
         }
         var node = this.node;
         if(node.active)
@@ -70,14 +77,24 @@ cc.Class({
 
     onSwitchYes: function(){
         this.hide();
-        let main = cc.find('Canvas').getComponent('HelloWorld');
-        main.removeNFEvent();
-        main.sendData({'code':'62', 'name':'change start', data:{'no1':ChessClass.nf_no1, 'no2':ChessClass.nf_no2, 'check':true}});
+        this.canvas.removeNFEvent();
+        this.canvas.sendData({'code':'62', 'name':'change start', data:{'no1':ChessClass.nf_no1, 'no2':ChessClass.nf_no2, 'check':true}});
     },
 
     onSwitchNo: function(){
         this.hide();
-        let main = cc.find('Canvas').getComponent('HelloWorld');
-        main.sendData({'code':'62', 'name':'change start', data:{'no1':ChessClass.nf_no1, 'no2':ChessClass.nf_no2, 'check':false}});
-    }
+        this.canvas.sendData({'code':'62', 'name':'change start', data:{'no1':ChessClass.nf_no1, 'no2':ChessClass.nf_no2, 'check':false}});
+    },
+
+    onConnectYes: function(){
+        this.hide();
+        this.schedule(function() {
+            // 这里的 this 指向 调用对象
+            // this.doSomething();
+        }, interval, repeat, delay);
+    },
+
+    onConnectNo: function(){
+        this.hide();
+    },
 });

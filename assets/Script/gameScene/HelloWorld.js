@@ -538,7 +538,7 @@ cc.Class({
     addFWEvent: function(limits){
         cc.log('添加fw选择事件');
 
-        this.FWListener = {
+        let listenerObj = {
             event: cc.EventListener.TOUCH_ONE_BY_ONE,
             onTouchBegan: function (touch, event) {return true; /*这里必须要写 return true*/},
 
@@ -561,8 +561,8 @@ cc.Class({
                     if(flag){
                         // 建立wall
                         // 取消侦听
-                        cc.log('移除fw侦听', self.FWListener);
-                        cc.eventManager.removeListener(this);
+                        cc.log('移除fw侦听1', self.FWListener);
+                        cc.eventManager.removeListener(self.FWListener);
                         self.FWListener = null;
                         self.sendData({'code':'42', 'name':'fireWall', data:{'x':pos.x, 'y':pos.y}});
                     }
@@ -570,13 +570,13 @@ cc.Class({
             }
         };
         // 绑定单点触摸事件
-        cc.eventManager.addListener(this.FWListener, this.checkboard.node);
+        this.FWListener = cc.eventManager.addListener(listenerObj, this.checkboard.node);
     },
 
     // 解除fire wall事件侦听
     removeFWEvent:function(){
         if(this.FWListener){
-            cc.log('移除fw侦听', this.FWListener);
+            cc.log('移除fw侦听2', this.FWListener);
             cc.eventManager.removeListener(this.FWListener);
             this.FWListener = null;
         }
@@ -590,7 +590,7 @@ cc.Class({
         cc.log('移除当前棋盘所有侦听');
 
         if(this.FWListener){
-            cc.log('移除fw侦听', this.FWListener);
+            cc.log('移除fw侦听3', this.FWListener);
             cc.eventManager.removeListener(this.FWListener);
             this.FWListener = null;
         }

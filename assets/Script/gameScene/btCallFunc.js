@@ -33,6 +33,9 @@ cc.Class({
 
                 this.sendData({'code':'30', 'name':'start LB', data:{}});
                 this.lbOpen = true;
+                this.vcOpen = false;
+                this.fwOpen = false;
+                this.nfOpen = false;
                 this.lb.color = new cc.Color(128, 128, 128);
             }else{cc.log('进入lineboost回调2');
                 this.lbOpen = false;
@@ -56,6 +59,9 @@ cc.Class({
                 
                 this.sendData({'code':'40', 'name':'start FW', data:{}});
                 this.fwOpen = true;
+                this.lbOpen = false;
+                this.vcOpen = false;
+                this.nfOpen = false;
                 this.fw.color = new cc.Color(128, 128, 128);
             }else{
                 this.fwOpen = false;
@@ -80,6 +86,9 @@ cc.Class({
 
                 this.sendData({'code':'50', 'name':'start VC', data:{}});
                 this.vcOpen = true;
+                this.lbOpen = false;
+                this.fwOpen = false;
+                this.nfOpen = false;
                 this.vc.color = new cc.Color(128, 128, 128);
             }else{
                 this.vcOpen = false;
@@ -99,6 +108,9 @@ cc.Class({
 
                 this.sendData({'code':'60', 'name':'start NF', data:{}});
                 this.nfOpen = true;
+                this.lbOpen = false;
+                this.vcOpen = false;
+                this.fwOpen = false;
                 this.nf.color = new cc.Color(128, 128, 128);
             }else{
                 this.nfOpen = false;

@@ -3051,7 +3051,7 @@
       "b": 127.5,
       "a": 255
     },
-    "_N$maxLength": 10
+    "_N$maxLength": 14
   },
   {
     "__type__": "cc.Node",
@@ -4023,7 +4023,7 @@
       "b": 127.5,
       "a": 255
     },
-    "_N$maxLength": 10
+    "_N$maxLength": 14
   },
   {
     "__type__": "cc.Node",

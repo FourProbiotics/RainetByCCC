@@ -226,21 +226,21 @@ cc.Class({
 
     // 参观房间
     onVisitRoom: function(){
-        this.v_room = this.visit_room.string;
-        this.v_pas = this.visit_password.string;
-        if(this.v_room != '')
-        {
-            this.v_pas = sha1.hex_sha1(this.v_pas);
-            let cmd = Rson.encode({'code':'06', 'name':'visit', data:{'room':this.v_room, 'password':this.v_pas}});
-            cc.log(cmd);
-            cc.webSocket.send(cmd);
-            this.showWaitingPanel('正在搜索房间，请稍后');
-            this.operatorLayer.active = false;
-        }else{
-            cc.log('visit room failed!');
-            this.v_pas = '';
-            this.visit_password.string = '';
-        }
+        // this.v_room = this.visit_room.string;
+        // this.v_pas = this.visit_password.string;
+        // if(this.v_room != '')
+        // {
+        //     this.v_pas = sha1.hex_sha1(this.v_pas);
+        //     let cmd = Rson.encode({'code':'06', 'name':'visit', data:{'room':this.v_room, 'password':this.v_pas}});
+        //     cc.log(cmd);
+        //     cc.webSocket.send(cmd);
+        //     this.showWaitingPanel('正在搜索房间，请稍后');
+        //     this.operatorLayer.active = false;
+        // }else{
+        //     cc.log('visit room failed!');
+        //     this.v_pas = '';
+        //     this.visit_password.string = '';
+        // }
     },
 
     // 登录面板-登录

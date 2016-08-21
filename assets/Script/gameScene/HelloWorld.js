@@ -63,6 +63,7 @@ cc.Class({
                 // 游戏开始
                 self.room = msg.room;
                 self.setRoom(msg.room);
+                self.myName = msg.myName;self.enemyName = msg.enemyName;
                 self.setPlayerNames(msg.myName, msg.enemyName);
                 // self.setScores(msg.myScore, msg.enemyScore);
                 self.group = msg.group;
@@ -110,6 +111,7 @@ cc.Class({
                     //己方
                     if(msg.test)
                     {
+                        self.setTips('选择 Line Boost 对象\n再次点击终端卡 取消');
                         // 先取消其他侦听
                         self.removeAllBoardEvent();
 
@@ -164,6 +166,7 @@ cc.Class({
                 if(data.to == cc.UID){
                     if(msg.test)
                     {
+                        self.setTips('选择 Fire Wall 对象\n再次点击终端卡 取消');
                         // 先取消其他侦听
                         self.removeAllBoardEvent();
 
@@ -215,6 +218,7 @@ cc.Class({
                 // 探查 反馈
                 if(msg.test)
                 {
+                    self.setTips('选择 Virus Checker 对象\n再次点击终端卡 取消');
                     // 先取消其他侦听
                     self.removeAllBoardEvent();
                     
@@ -254,6 +258,7 @@ cc.Class({
                 // 交换 反馈
                 if(msg.test)
                 {
+                    self.setTips('选择 两枚 404 Not Found 对象\n再次点击终端卡 取消');
                     // 先取消其他侦听
                     self.removeAllBoardEvent();
 
@@ -295,6 +300,7 @@ cc.Class({
 
                 // 棋子选择 反馈
                 if(msg.test){
+                    self.setTips('选择 棋子移动目标');
                     self.setPasses(msg.target);
                 }
                 else
@@ -327,11 +333,11 @@ cc.Class({
                                 self.lbSwitch = false;
                                 
                                 let btCallFunc = cc.find('Canvas').getComponent('btCallFunc');
-                                btCallFunc.fwOpen = false;
-                                btCallFunc.fw.color = new cc.Color(255, 255, 255);
+                                btCallFunc.lbOpen = false;
+                                btCallFunc.lb.color = new cc.Color(255, 255, 255);
                             }
 
-                            let script = self.myTeam[result['no']-1].getComponent('Chess');
+                            let script = self.myTeam[msg.target-1].getComponent('Chess');
                             script.clearAllTag();
                         }
                         // 回合结束
@@ -352,11 +358,11 @@ cc.Class({
                                 self.lbSwitch = false;
 
                                 let btCallFunc = cc.find('Canvas').getComponent('btCallFunc');
-                                btCallFunc.fwOpen = false;
-                                btCallFunc.fw.color = new cc.Color(255, 255, 255);
+                                btCallFunc.lbOpen = false;
+                                btCallFunc.lb.color = new cc.Color(255, 255, 255);
                             }
                         }else if(result['type']==3){
-                            let script = self.enemyTeam[result['no']-1].getComponent('Chess');
+                            let script = self.enemyTeam[msg.target-1].getComponent('Chess');
                             script.clearAllTag();
                         }
                     }
@@ -374,10 +380,15 @@ cc.Class({
                 // 游戏结束
                 if(msg.winner == cc.UID)
                 {
-                    self.setTips("一切都是，\n命运石之门的选择！");
+                    self.setTips("游戏结束，我方获胜");
                 }else{
-                    self.setTips('失败了失败了失败了失败了失败了失败了失败了失败了失败了');
+                    self.setTips('游戏结束，'+self.enemyName+'获胜');
                 }
+
+                // 10秒后返回开始场景
+                self.schedule(function() {
+                    cc.director.loadScene('startScene');
+                }, 10, 1);
             break;
         }
     },
@@ -550,8 +561,9 @@ cc.Class({
                     if(flag){
                         // 建立wall
                         // 取消侦听
-                        cc.eventManager.removeListener(this);cc.log('移除fw侦听');
-                        this.FWListener = null;
+                        cc.log('移除fw侦听', self.FWListener);
+                        cc.eventManager.removeListener(this);
+                        self.FWListener = null;
                         self.sendData({'code':'42', 'name':'fireWall', data:{'x':pos.x, 'y':pos.y}});
                     }
                 }
@@ -564,7 +576,8 @@ cc.Class({
     // 解除fire wall事件侦听
     removeFWEvent:function(){
         if(this.FWListener){
-            cc.eventManager.removeListener(this.FWListener);cc.log('移除fw侦听');
+            cc.log('移除fw侦听', this.FWListener);
+            cc.eventManager.removeListener(this.FWListener);
             this.FWListener = null;
         }
         this.removeEnemyChessEvent();
@@ -577,7 +590,8 @@ cc.Class({
         cc.log('移除当前棋盘所有侦听');
 
         if(this.FWListener){
-            cc.eventManager.removeListener(this.FWListener);cc.log('移除fw侦听');
+            cc.log('移除fw侦听', this.FWListener);
+            cc.eventManager.removeListener(this.FWListener);
             this.FWListener = null;
         }
         this.removeEnemyChessEvent();
@@ -669,7 +683,7 @@ cc.Class({
             label = cc.find('myTerminalState', this.stateBar).getComponent(cc.Label);
         else
             label = cc.find('enemyTerminalState', this.stateBar).getComponent(cc.Label);
-        label.string = '捕获 Link: '+cl+' Virus: '+cv;
+        label.string = 'Link: '+cl+' Virus: '+cv;
     },
 
     // 实现交换效果

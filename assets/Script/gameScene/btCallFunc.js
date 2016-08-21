@@ -25,7 +25,7 @@ cc.Class({
 
     onLineBoost: function(){
         this.hide(this.terminals);
-
+        
         if(!this.canvas.lbSwitch)
         {
             if(!this.lbOpen){
@@ -34,13 +34,13 @@ cc.Class({
                 this.sendData({'code':'30', 'name':'start LB', data:{}});
                 this.lbOpen = true;
                 this.lb.color = new cc.Color(128, 128, 128);
-            }else{
+            }else{cc.log('进入lineboost回调2');
                 this.lbOpen = false;
                 this.canvas.removeLBEvent();
                 this.lb.color = new cc.Color(255, 255, 255);
             }
         }else{
-            this.sendData({'code':'30', 'name':'start LB', data:{}});
+            this.sendData({'code':'30', 'name':'close LB', data:{}});
             this.lbOpen = false;
             this.lb.color = new cc.Color(255, 255, 255);
         }

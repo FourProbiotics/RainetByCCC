@@ -11,7 +11,7 @@ cc.Class({
         // 获得callbacks脚本组件
         this.callbacks = cc.find('callbacks_script').getComponent('callbacks');
         // 初始化websocket
-        cc.webSocket = this.initWebSocket('ws://121.42.170.78:12345');
+        cc.webSocket = this.initWebSocket('ws://rainet.cc:12345');
     },
 
     randomString: function(len) {

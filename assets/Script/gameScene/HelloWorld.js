@@ -87,7 +87,7 @@ cc.Class({
                     return;
 
                 // 回合开始
-                self.setTips('你的回合');
+                self.setTips('你的回合，现在可以进行棋子移动');
                 // 移除现有棋子事件侦听
                 self.removeMyChessEvent();
                 // 添加侦听
@@ -506,6 +506,7 @@ cc.Class({
         this.removeEnemyChessEvent();
         this.removeMyChessEvent();
         this.addChessChooseEvent();
+        this.setTips('选择要移动的棋子');
     },
 
     // 给棋子加上viruschecker选择事件
@@ -519,6 +520,7 @@ cc.Class({
         this.removeEnemyChessEvent();
         this.removeMyChessEvent();
         this.addChessChooseEvent();
+        this.setTips('选择要移动的棋子');
     },
 
     // 给棋子加上404选择事件
@@ -532,6 +534,7 @@ cc.Class({
         this.removeEnemyChessEvent();
         this.removeMyChessEvent();
         this.addChessChooseEvent();
+        this.setTips('选择要移动的棋子');
     },
 
     // 给棋盘加上firewall选择事件
@@ -583,6 +586,7 @@ cc.Class({
         this.removeEnemyChessEvent();
         this.removeMyChessEvent();
         this.addChessChooseEvent();
+        this.setTips('选择要移动的棋子');
     },
 
     // 移除当前棋盘所有侦听
@@ -819,6 +823,10 @@ cc.Class({
     // @blocks: 记录可通过区域的数组
     setPasses: function(blocks){
         cc.log('关闭所有通过效果');
+        for(let key in this.myTeam){
+            let script = this.enemyTeam[key].getComponent('Chess');
+            script.clearFocusTag();
+        }
         this.unsetPasses();
 
         cc.log('开启指定位置效果');
@@ -827,6 +835,9 @@ cc.Class({
             let pos = blocks[key];
             this.setBlockCanPass(pos['x'], pos['y'], true);
             cc.log('指定位置', pos['x'], pos['y']);
+
+            if(pos['chess'])
+                this.enemyTeam[pos['chess']-1].getComponent('Chess').setLockTag(true);
         }
     },
 

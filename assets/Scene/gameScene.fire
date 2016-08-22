@@ -10777,7 +10777,7 @@
     },
     "_enabled": true,
     "_useOriginalSize": false,
-    "_actualFontSize": 13,
+    "_actualFontSize": 30,
     "_fontSize": 30,
     "_lineHeight": 30,
     "_enableWrapText": false,
@@ -10785,7 +10785,7 @@
       "__uuid__": "2cf1add1-cea0-4852-abcb-d0ee267ccf2a"
     },
     "_isSystemFontUsed": false,
-    "_N$string": "FourProbiotics",
+    "_N$string": "name",
     "_N$horizontalAlign": 1,
     "_N$verticalAlign": 1,
     "_N$overflow": 2
@@ -10872,7 +10872,7 @@
     },
     "_enabled": true,
     "_useOriginalSize": false,
-    "_actualFontSize": 22,
+    "_actualFontSize": 28,
     "_fontSize": 30,
     "_lineHeight": 30,
     "_enableWrapText": true,
@@ -10880,7 +10880,7 @@
       "__uuid__": "2cf1add1-cea0-4852-abcb-d0ee267ccf2a"
     },
     "_isSystemFontUsed": false,
-    "_N$string": "对手用户名",
+    "_N$string": "name",
     "_N$horizontalAlign": 1,
     "_N$verticalAlign": 1,
     "_N$overflow": 2

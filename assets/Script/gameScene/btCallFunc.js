@@ -69,7 +69,7 @@ cc.Class({
                 this.fw.color = new cc.Color(255, 255, 255);
             }
         }else{
-            this.sendData({'code':'40', 'name':'start FW', data:{}});
+            this.sendData({'code':'40', 'name':'close FW', data:{}});
             this.fwOpen = false;
             this.fw.color = new cc.Color(255, 255, 255);
         }

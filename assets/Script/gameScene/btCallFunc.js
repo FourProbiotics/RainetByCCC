@@ -8,7 +8,8 @@ cc.Class({
         lbOpen: false,
         fwOpen: false,
         vcOpen: false,
-        nfOpen: false
+        nfOpen: false,
+        isSound: true
     },
 
     // use this for initialization
@@ -21,6 +22,9 @@ cc.Class({
         this.vc = cc.find('Canvas/terminals/virusChecker');
         this.nf = cc.find('Canvas/terminals/404');
         this.talkInput = cc.find('Canvas/fitLayer/buttonBar/talkBox').getComponent(cc.EditBox);
+        this.soundIcon1 = cc.find('Canvas/sysPanel/sound/icon1');
+        this.soundIcon2 = cc.find('Canvas/sysPanel/sound/icon2');
+        this.soundLabel = cc.find('Canvas/sysPanel/sound/label').getComponent(cc.Label);
     },
 
     onLineBoost: function(){
@@ -123,6 +127,24 @@ cc.Class({
     onSysClose: function(){
         this.hide(this.sysPanel);
         this.canvas.showPop('close');
+    },
+
+    onSysSound: function(){
+        if(this.isSound){
+            this.isSound = false;
+            this.soundIcon1.active = false;
+            this.soundIcon2.active = true;
+            this.soundLabel.string = '开启bgm'
+
+            cc.audioEngine.setMusicVolume(0);
+        }else{
+            this.isSound = true;
+            this.soundIcon2.active = false;
+            this.soundIcon1.active = true;
+            this.soundLabel.string = '静音'
+
+            cc.audioEngine.setMusicVolume(1);
+        }
     },
 
     onSendTalk: function(){

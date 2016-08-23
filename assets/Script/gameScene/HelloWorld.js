@@ -24,19 +24,24 @@ cc.Class({
         nfSwitch: false,
         fwSwitch: false,
         vcSwitch: false,
-        reConnect: false
+        reConnect: false,
+        bgm01: cc.AudioClip,
+        bgm02: cc.AudioClip,
+        bgm03: cc.AudioClip,
+        bgm04: cc.AudioClip,
     },
 
     // use this for initialization
     onLoad: function () {
         cc.log("游戏场景加载");
-
+        
         this.plistUrl = 'Texture/Tex1'; //plist的url
         this.currentChess = null;
         this.tips = cc.find('Canvas/fitLayer/stateBar/tips').getComponent(cc.Label);
         this.stateBar = cc.find('Canvas/fitLayer/stateBar');
         this.buttonBar = cc.find('Canvas/fitLayer/buttonBar').getComponent('buttonBar');
         this.curTag = 0;
+        this.timeRecord = 0;
         self = this;
         
         //先用loader加载plist和texture 再继续添加到spriteFrameCache
@@ -80,6 +85,44 @@ cc.Class({
                         self.addChessChangeEvent();
                     break;
                 }
+
+                self.schedule(function(){
+                    self.timeRecord++;
+                    
+                    switch(self.timeRecord)
+                    {
+                        case 1:
+                            cc.audioEngine.playMusic(self.bgm01, false);
+                        break;
+
+                        case 52:
+                            cc.audioEngine.stopMusic(true);
+                            cc.audioEngine.playMusic(self.bgm02, false);
+                        break;
+
+                        case 122:
+                            cc.audioEngine.stopMusic(true);
+                            cc.audioEngine.playMusic(self.bgm03, false);
+                        break;
+
+                        case 170:
+                            cc.audioEngine.stopMusic(true);
+                            cc.audioEngine.playMusic(self.bgm04, false);
+                        break;
+                    }
+                }, 5, 170);
+
+                self.schedule(function(){
+                    cc.audioEngine.playMusic(self.bgm02, false);
+                }, 260, 1);
+
+                self.schedule(function(){
+                    cc.audioEngine.playMusic(self.bgm03, false);
+                }, 615, 1);
+
+                self.schedule(function(){
+                    cc.audioEngine.playMusic(self.bgm04, false);
+                }, 848, 1);
             break;
 
             case '23':
@@ -373,7 +416,7 @@ cc.Class({
                 // 弹幕
                 // 对战玩家看不到游客弹幕
                 if(msg.sender != 'V' || self.group == 'V')
-                    self.shotBullet(msg.string, msg.sender);
+                    self.shotBullet(msg.str, msg.sender);
             break;
 
             case '91':
@@ -938,7 +981,7 @@ cc.Class({
         cc.log('重新连接服务器');
         this.reConnect = true;
         if (cc.webSocket) {
-            cc.webSocket = new WebSocket("ws://121.42.170.78:12345");
+            cc.webSocket = new WebSocket("ws://rainet.cc:12345");
             cc.webSocket.onmessage = this.onWSMsg;
         }
     },

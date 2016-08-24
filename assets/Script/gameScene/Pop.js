@@ -71,7 +71,7 @@ cc.Class({
         this.canvas.sendData({'code':'90', 'name':'change start', data:{}});
         this.schedule(function(){
             cc.director.end();
-        }, 500, 1);
+        }, 0.5, 1);
     },
 
     onCloseNo: function(){

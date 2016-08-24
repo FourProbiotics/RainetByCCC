@@ -716,7 +716,7 @@ cc.Class({
             this.stateBar.spriteFrame = cc.Tex1.getSpriteFrame('stateBar1');
         }else{
             this.checkboard.spriteFrame = cc.Tex1.getSpriteFrame('checkboard2');
-            this.stateBar.spriteFrame = cc.Tex1.getSpriteFrame('Bback');
+            this.stateBar.spriteFrame = cc.Tex1.getSpriteFrame('stateBar2');
         }
         // 给所有己方棋子改变类组别
         for(var key in this.myTeam)

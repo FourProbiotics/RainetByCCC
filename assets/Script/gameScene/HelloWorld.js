@@ -12,10 +12,18 @@ cc.Class({
         group: 'G',
         checkboard: cc.Sprite,
         stateBar: cc.Sprite,
+        eventLayer: cc.Node,
         pop: cc.Node,
         enemyTeam: [cc.Sprite],
         myTeam: [cc.Sprite],
-        mass: cc.Prefab,
+
+        p_mass: cc.Prefab,
+        p_click_b: cc.Prefab,
+        p_click_g: cc.Prefab,
+        p_fire: cc.Prefab,
+        p_danger: cc.Prefab,
+        p_honor: cc.Prefab,
+
         bullet: cc.Prefab,
         gamestart: false,
         vnum: 0,
@@ -25,10 +33,6 @@ cc.Class({
         fwSwitch: false,
         vcSwitch: false,
         reConnect: false,
-        bgm01: cc.AudioClip,
-        bgm02: cc.AudioClip,
-        bgm03: cc.AudioClip,
-        bgm04: cc.AudioClip,
     },
 
     // use this for initialization
@@ -38,10 +42,15 @@ cc.Class({
         this.plistUrl = 'Texture/Tex1'; //plist的url
         this.currentChess = null;
         this.tips = cc.find('Canvas/fitLayer/stateBar/tips').getComponent(cc.Label);
-        this.stateBar = cc.find('Canvas/fitLayer/stateBar');
+        this.stateBar = cc.find('Canvas/fitLayer/stateBar').getComponent(cc.Sprite);
         this.buttonBar = cc.find('Canvas/fitLayer/buttonBar').getComponent('buttonBar');
+
+        // sound
+        this.sound = this.node.getComponent('Sound');
         this.curTag = 0;
-        this.timeRecord = 0;
+        this.curBgm = 0;
+        this.bgm = [this.sound.bgm01, this.sound.bgm02, this.sound.bgm03];
+
         self = this;
         
         //先用loader加载plist和texture 再继续添加到spriteFrameCache
@@ -55,6 +64,23 @@ cc.Class({
         // 更改响应回调函数
         cc.webSocket.onmessage = this.onWSMsg;
         cc.webSocket.onclose = this.onWSClose;
+
+        // 添加场景点击反馈侦听
+        let listenerObj = {
+            event: cc.EventListener.TOUCH_ONE_BY_ONE,
+            onTouchBegan: function (touch, event) {
+                let pos = self.node.convertToNodeSpaceAR(touch.getLocation());
+                self.showEffect('click'+self.group, pos.x, pos.y);
+                return true; /*这里必须要写 return true*/
+            },
+
+            onTouchMoved: function (touch, event) {
+                let pos = self.node.convertToNodeSpaceAR(touch.getLocation());
+                self.showEffect('click'+self.group, pos.x, pos.y);
+            }
+        };
+        // 绑定单点触摸事件
+        this.clickListener = cc.eventManager.addListener(listenerObj, this.eventLayer);
     },
 
     // 战斗时websocket回调
@@ -86,43 +112,23 @@ cc.Class({
                     break;
                 }
 
-                self.schedule(function(){
-                    self.timeRecord++;
+                // 计时器循环播放背景音乐
+                self.bgmScheduleFunc = function(){
                     
-                    switch(self.timeRecord)
+                    if(!cc.audioEngine.isMusicPlaying())
                     {
-                        case 1:
-                            cc.audioEngine.playMusic(self.bgm01, false);
-                        break;
-
-                        case 52:
-                            cc.audioEngine.stopMusic(true);
-                            cc.audioEngine.playMusic(self.bgm02, false);
-                        break;
-
-                        case 122:
-                            cc.audioEngine.stopMusic(true);
-                            cc.audioEngine.playMusic(self.bgm03, false);
-                        break;
-
-                        case 170:
-                            cc.audioEngine.stopMusic(true);
-                            cc.audioEngine.playMusic(self.bgm04, false);
-                        break;
+                        if(self.bgm.length > self.curBgm)
+                            cc.audioEngine.playMusic(self.bgm[self.curBgm++], false);
+                        else{
+                            self.curBgm = 0;
+                            cc.audioEngine.playMusic(self.bgm[self.curBgm++], false);
+                        }
                     }
-                }, 5, 170);
+                };
+                self.schedule(self.bgmScheduleFunc, 5, 170);
 
-                self.schedule(function(){
-                    cc.audioEngine.playMusic(self.bgm02, false);
-                }, 260, 1);
+                self.playSound('begin');
 
-                self.schedule(function(){
-                    cc.audioEngine.playMusic(self.bgm03, false);
-                }, 615, 1);
-
-                self.schedule(function(){
-                    cc.audioEngine.playMusic(self.bgm04, false);
-                }, 848, 1);
             break;
 
             case '23':
@@ -165,6 +171,8 @@ cc.Class({
                             self.addLBEvent(target);
                         }
                     }else{
+                        // 音效
+                        self.playSound('line');
                         // 摘除已装备的超速回线
                         self.setLineBoost(self.group, msg.target, false);
                         // 回合结束
@@ -174,6 +182,8 @@ cc.Class({
                     //敌方
                     if(!msg.test)
                     {
+                        // 音效
+                        self.playSound('line');
                         // 摘除已装备的超速回线
                         self.setLineBoost(self.enemyGroup, msg.target, false);
                     }
@@ -182,7 +192,9 @@ cc.Class({
             break;
 
             case '33':
-
+                // 音效
+                self.playSound('line');
+                self.playSound('lb');
                 // 超速回线 确认
                 if(data.to == cc.UID)
                 {
@@ -223,6 +235,8 @@ cc.Class({
                 }else{
                     if(!msg.test)
                     {
+                        // 音效
+                        self.playSound('wall');
                         // 移除己方现有防火墙
                         self.setFireWall(self.enemyGroup, 9-msg.target['x'], 9-msg.target['y'], false);
                     }
@@ -231,7 +245,9 @@ cc.Class({
             break;
 
             case '43':
-
+                // 音效
+                self.playSound('wall');
+                self.playSound('fw');
                 // 防火墙 确认
                 if(data.to == cc.UID)
                 {
@@ -276,7 +292,9 @@ cc.Class({
             break;
 
             case '53':
-
+                // 音效
+                self.playSound('check');
+                self.playSound('vc');
                 // 探查 结束
                 if(data.to == cc.UID)
                 {
@@ -320,7 +338,9 @@ cc.Class({
             break;
 
             case '63':
-
+                // 音效
+                self.playSound('exchange');
+                self.playSound('nf');
                 // 交换 确认
                 if(data.to == cc.UID)
                 {
@@ -351,7 +371,8 @@ cc.Class({
             break;
 
             case '73':
-
+                // 音效
+                self.playSound('move');
                 // 棋子移动 确认
                 if(data.to == cc.UID)
                 {
@@ -359,6 +380,7 @@ cc.Class({
                     {
                         let result = msg.result;
                         self.moveChess(self.group, msg.target, result['x'], result['y']);
+
                         // 若移动模式为进攻（吃了别的棋子）则移除掉对应棋子
                         if(result['type']==2){
 
@@ -368,6 +390,11 @@ cc.Class({
                             self.setCaptureState(self.group, result['captureL'], result['captureV']);
                             
                             self.moveChess(self.enemyGroup, result['eno'], result['ex'], result['ey']);
+                            // 显示吃子时的粒子特效
+                            if(result['etype']=='link')
+                                self.showEffect('honor', result['x'], result['y']);
+                            else
+                                self.showEffect('danger', result['x'], result['y']);
                         }
                         // 若是移入database
                         if(result['type']==3){
@@ -404,6 +431,12 @@ cc.Class({
                                 btCallFunc.lbOpen = false;
                                 btCallFunc.lb.color = new cc.Color(255, 255, 255);
                             }
+                            // 显示吃子时的粒子特效
+                            if(result['etype']=='link')
+                                self.showEffect('honor', 9-result['x'], 9-result['y']);
+                            else
+                                self.showEffect('danger', 9-result['x'], 9-result['y']);
+
                         }else if(result['type']==3){
                             let script = self.enemyTeam[msg.target-1].getComponent('Chess');
                             script.clearAllTag();
@@ -421,17 +454,26 @@ cc.Class({
 
             case '91':
                 // 游戏结束
+                // 停止bgm回调并静音
+                self.unschedule(self.bgmScheduleFunc);
+                cc.audioEngine.pauseMusic();
+
+                // 结束演出
                 if(msg.winner == cc.UID)
                 {
                     self.setTips("游戏结束，我方获胜");
+                    // 展示胜利演出
+                    self.showEndEffect(true);
                 }else{
                     self.setTips('游戏结束，'+self.enemyName+'获胜');
+                    // 展示失败演出
+                    self.showEndEffect(false);
                 }
 
-                // 10秒后返回开始场景
+                // 9秒后返回开始场景
                 self.schedule(function() {
                     cc.director.loadScene('startScene');
-                }, 10, 1);
+                }, 9, 1);
             break;
         }
     },
@@ -439,6 +481,18 @@ cc.Class({
     // 战斗场景ws关闭回调
     onWSClose: function(event){
         ;
+    },
+
+    // 结束游戏演出
+    showEndEffect: function(isWinner){
+        if(isWinner)
+        {
+            // 音效
+            self.playSound('win');
+        }else{
+            // 音效
+            this.playSound('lose');
+        }
     },
 
     // 给己方棋子添加身份变化事件
@@ -662,7 +716,7 @@ cc.Class({
             this.stateBar.spriteFrame = cc.Tex1.getSpriteFrame('stateBar1');
         }else{
             this.checkboard.spriteFrame = cc.Tex1.getSpriteFrame('checkboard2');
-            this.stateBar.spriteFrame = cc.Tex1.getSpriteFrame('stateBar2');
+            this.stateBar.spriteFrame = cc.Tex1.getSpriteFrame('Bback');
         }
         // 给所有己方棋子改变类组别
         for(var key in this.myTeam)
@@ -696,7 +750,7 @@ cc.Class({
     // 设置房间号
     // @num: 房间号
     setRoom: function(num){
-        var label = cc.find('room', this.stateBar).getComponent(cc.Label);
+        var label = cc.find('room', this.stateBar.node).getComponent(cc.Label);
         label.string = num;
     },
 
@@ -704,8 +758,8 @@ cc.Class({
     // @myName: 己方玩家名
     // @enemyName: 对方玩家名
     setPlayerNames: function(myName, enemyName){
-        var label1 = cc.find('myName', this.stateBar).getComponent(cc.Label);
-        var label2 = cc.find('enemyName', this.stateBar).getComponent(cc.Label);
+        var label1 = cc.find('myName', this.stateBar.node).getComponent(cc.Label);
+        var label2 = cc.find('enemyName', this.stateBar.node).getComponent(cc.Label);
         label1.string = myName;
         label2.string = enemyName;
     },
@@ -714,8 +768,8 @@ cc.Class({
     // @myName: 己方分数
     // @enemyName: 对方分数
     /*setScores: function(myScore, enemyScore){
-        var label1 = cc.find('myScore', this.stateBar).getComponent(cc.Label);
-        var label2 = cc.find('enemyScore', this.stateBar).getComponent(cc.Label);
+        var label1 = cc.find('myScore', this.stateBar.node).getComponent(cc.Label);
+        var label2 = cc.find('enemyScore', this.stateBar.node).getComponent(cc.Label);
         label1.string = myScore;
         label2.string = enemyScore;
     },*/
@@ -727,9 +781,9 @@ cc.Class({
     setCaptureState(group, cl, cv){
         var label;
         if(this.group == group)
-            label = cc.find('myTerminalState', this.stateBar).getComponent(cc.Label);
+            label = cc.find('myTerminalState', this.stateBar.node).getComponent(cc.Label);
         else
-            label = cc.find('enemyTerminalState', this.stateBar).getComponent(cc.Label);
+            label = cc.find('enemyTerminalState', this.stateBar.node).getComponent(cc.Label);
         label.string = 'Link: '+cl+' Virus: '+cv;
     },
 
@@ -739,7 +793,7 @@ cc.Class({
     // @isSwitch: 是否交换
     switchChess: function(group, c1, c2, isSwitch){
         // 获得指定chess对象
-        var mass = cc.instantiate(this.mass);
+        var mass = cc.instantiate(this.p_mass);
         var chess1, chess2, team;
         team = this.group==group?this.myTeam:this.enemyTeam;
         
@@ -962,6 +1016,116 @@ cc.Class({
         };
     },
 
+    showEffect: function(type, x, y){
+        let p;
+        switch(type){
+            case 'honor':
+                p = cc.instantiate(this.p_honor);
+                this.checkboard.node.addChild(p);
+                p.setPosition(this.convertBoardToNodeXY(x,y));
+
+                this.playSound('link');
+            break;
+
+            case 'danger':
+                p = cc.instantiate(this.p_danger);
+                this.checkboard.node.addChild(p);
+                p.setPosition(this.convertBoardToNodeXY(x,y));
+
+                this.playSound('virus');
+            break;
+
+            case 'clickB':
+                p = cc.instantiate(this.p_click_b);
+                this.node.addChild(p);
+                p.setPosition(x, y);
+
+                this.playSound('click');
+            break;
+
+            case 'clickG':
+                p = cc.instantiate(this.p_click_g);
+                this.node.addChild(p);
+                p.setPosition(x, y);
+
+                this.playSound('click');
+            break;
+
+            case 'fire':
+                p = cc.instantiate(this.p_fire);
+                this.node.addChild(p);
+
+                p.setPosition(x, y);
+            break;
+            
+        }
+    },
+
+    // 播放音效
+    playSound: function(effect){
+        switch(effect){
+            case 'link':
+                cc.audioEngine.playEffect(this.sound.e_link);
+            break;
+
+            case 'virus':
+                cc.audioEngine.playEffect(this.sound.e_virus);
+            break;
+
+            case 'line':
+                cc.audioEngine.playEffect(this.sound.e_line);
+            break;
+
+            case 'wall':
+                cc.audioEngine.playEffect(this.sound.e_wall);
+            break;
+
+            case 'check':
+                cc.audioEngine.playEffect(this.sound.e_check);
+            break;
+
+            case 'exchange':
+                cc.audioEngine.playEffect(this.sound.e_exchange);
+            break;
+
+            case 'begin':
+                cc.audioEngine.playEffect(this.sound.e_begin);
+            break;
+
+            case 'move':
+                cc.audioEngine.playEffect(this.sound.e_move);
+            break;
+
+            case 'click':
+                cc.audioEngine.playEffect(this.sound.e_click);
+            break;
+
+            case 'lose':
+                cc.audioEngine.playEffect(this.sound.e_lose);
+            break;
+
+            case 'win':
+                cc.audioEngine.playEffect(this.sound.voice_win);
+            break;
+
+            case 'lb':
+                cc.audioEngine.playEffect(this.sound.voice_lb);
+            break;
+
+            case 'fw':
+                cc.audioEngine.playEffect(this.sound.voice_fw);
+            break;
+
+            case 'vc':
+                cc.audioEngine.playEffect(this.sound.voice_vc);
+            break;
+
+            case 'nf':
+                cc.audioEngine.playEffect(this.sound.voice_nf);
+            break;
+        }
+    },
+
     // 将点击坐标转化为棋盘坐标
     getBoardXY: function(pos){
         let boardX=null, boardY=null;
@@ -972,6 +1136,19 @@ cc.Class({
 
         if(boardX && boardY)
             return cc.p(boardX, boardY);
+        else
+            return null;
+    },
+
+    convertBoardToNodeXY: function(x, y){
+        let nodeX=null, nodeY=null;
+        if(y>=1 && y<=8){
+            nodeX = -313 + 70*x;
+            nodeY = 315 - 70*y;
+        }
+
+        if(nodeX && nodeY)
+            return cc.p(nodeX, nodeY);
         else
             return null;
     },

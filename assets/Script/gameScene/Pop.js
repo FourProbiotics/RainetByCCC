@@ -68,7 +68,7 @@ cc.Class({
     },
 
     onCloseYes: function(){
-        this.canvas.sendData({'code':'62', 'name':'change start', data:{}});
+        this.canvas.sendData({'code':'90', 'name':'change start', data:{}});
         this.schedule(function(){
             cc.director.end();
         }, 500, 1);
@@ -81,7 +81,7 @@ cc.Class({
     onSwitchYes: function(){
         this.hide();
         this.canvas.removeNFEvent();
-        this.canvas.sendData({'code':'90', 'name':'resign', data:{'no1':ChessClass.nf_no1, 'no2':ChessClass.nf_no2, 'check':true}});
+        this.canvas.sendData({'code':'62', 'name':'resign', data:{'no1':ChessClass.nf_no1, 'no2':ChessClass.nf_no2, 'check':true}});
     },
 
     onSwitchNo: function(){

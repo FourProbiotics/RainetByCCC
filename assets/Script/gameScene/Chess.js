@@ -63,7 +63,6 @@ var Chess = cc.Class({
                 posx = -156 - 80*(x - 6);
             posy = 325.7;
         }else if(y == 9){
-            x = 9-x;
             if(x<=2)
                 posx = -316 + 80*x;
             else if(x<=5)

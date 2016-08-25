@@ -42,7 +42,7 @@
     "_tag": -1,
     "_opacityModifyRGB": false,
     "_reorderChildDirty": false,
-    "_id": "2d2f792f-a40c-49bb-a189-ed176a246e49"
+    "_id": "73eb3a60-7cba-458f-a592-8402b1d4b904"
   },
   {
     "__type__": "cc.Node",
@@ -15377,6 +15377,9 @@
     "p_honor": {
       "__uuid__": "43d7345d-f658-4834-b717-ea6789c2f3db"
     },
+    "P_winback": {
+      "__uuid__": "f25a49a3-5c59-4d27-abcc-7f8d7b88d509"
+    },
     "bullet": {
       "__uuid__": "8bfda48c-ef31-49c2-8a91-eadf2cce7d43"
     },
@@ -15387,7 +15390,9 @@
     "nfSwitch": false,
     "fwSwitch": false,
     "vcSwitch": false,
-    "reConnect": false
+    "reConnect": false,
+    "myServerSize": 0,
+    "enemyServerSize": 0
   },
   {
     "__type__": "cea24OjCNNATr3bocY3ubHl",

@@ -23,6 +23,7 @@ cc.Class({
         p_fire: cc.Prefab,
         p_danger: cc.Prefab,
         p_honor: cc.Prefab,
+        P_winback: cc.Prefab,
 
         bullet: cc.Prefab,
         gamestart: false,
@@ -33,6 +34,8 @@ cc.Class({
         fwSwitch: false,
         vcSwitch: false,
         reConnect: false,
+        myServerSize: 0,
+        enemyServerSize: 0,
     },
 
     // use this for initialization
@@ -379,7 +382,8 @@ cc.Class({
                     if(msg.test)
                     {
                         let result = msg.result;
-                        self.moveChess(self.group, msg.target, result['x'], result['y']);
+                        if(result['type'] != 3)
+                            self.moveChess(self.group, msg.target, result['x'], result['y']);
 
                         // 若移动模式为进攻（吃了别的棋子）则移除掉对应棋子
                         if(result['type']==2){
@@ -398,6 +402,10 @@ cc.Class({
                         }
                         // 若是移入database
                         if(result['type']==3){
+                            // 按server现存棋子数移动棋子位置
+                            self.myServerSize++;
+                            self.moveChess(self.group, msg.target, self.myServerSize, result['y']);
+
                             if(result['moveLB'])
                             {
                                 self.lbSwitch = false;
@@ -418,7 +426,9 @@ cc.Class({
                     if(msg.test)
                     {
                         let result = msg.result;
-                        self.moveChess(self.enemyGroup, msg.target, 9-result['x'], 9-result['y']);
+                        if(result['type'] != 3)
+                            self.moveChess(self.enemyGroup, msg.target, 9-result['x'], 9-result['y']);
+
                         // 若移动模式为进攻（吃了别的棋子）则移除掉对应棋子
                         if(result['type']==2){
                             self.setCaptureState(self.enemyGroup, result['captureL'], result['captureV']);
@@ -438,6 +448,10 @@ cc.Class({
                                 self.showEffect('danger', 9-result['x'], 9-result['y']);
 
                         }else if(result['type']==3){
+                            // 按server现存棋子数移动棋子位置
+                            self.enemyServerSize++;
+                            self.moveChess(self.enemyGroup, msg.target, self.enemyServerSize, 9-result['y']);
+
                             let script = self.enemyTeam[msg.target-1].getComponent('Chess');
                             script.clearAllTag();
                         }
@@ -812,9 +826,10 @@ cc.Class({
                 lbSet1=true;
         }
 
-        // 回调函数用以去掉switch标记并重置敌方棋子至背面并设置line boost交换情况
+        // 回调函数用以去掉switch、check标记并重置敌方棋子至背面并设置line boost交换情况
         func1 = cc.callFunc(()=>{
-            c1Script.setSwitchTag(false); 
+            c1Script.setSwitchTag(false);
+            c1Script.setCheckTag(false);
             if(this.group!=group)
                 c1Script.changeType('bottom');
             else
@@ -824,6 +839,7 @@ cc.Class({
         }, this);
         func2 = cc.callFunc(()=>{
             c2Script.setSwitchTag(false);
+            c2Script.setCheckTag(false);
             if(this.group!=group)
                 c2Script.changeType('bottom');
             else

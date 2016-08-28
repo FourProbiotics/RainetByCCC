@@ -43,7 +43,7 @@ cc.Class({
         // 历史对局面板
         this.historyPanel = cc.find('Canvas/historyPanel');
         // 历史列表
-        this.historyList = cc.find('view/content', this.historyPanel);
+        this.historyList = cc.find('historyList/view/content', this.historyPanel);
 
         // 预加载场景
         cc.director.preloadScene('gameScene', function () {
@@ -151,12 +151,12 @@ cc.Class({
                 for(let i in hsArray){
                     let item = hsArray[i];
                     let historyItem = cc.instantiate(self.historyItem);
-                    historyItem.historyId = item['Id'];
+                    historyItem.historyId = item['id'];
                     historyItem.enemyId = item['Uid_1'] == cc.UID ? item['Uid_2'] : item['Uid_1'];
                     historyItem.getComponent(cc.Label).string = '对局id: '+historyItem.historyId
-                    +'\n对手id: '+historyItem.enemyId+'\n结束时间: '+item['Date'];
+                    +'\n对手id: '+historyItem.enemyId+'\n结束时间: \n'+item['Date'];
 
-                    historyItem.on('touchended', function(){
+                    historyItem.on(cc.Node.EventType.TOUCH_END, function(){
                         let cmd = Rson.encode({'code':'102', 'name':'start review', data:{'stepId':historyItem.historyId}});
                         cc.log(cmd);
                         cc.webSocket.send(cmd);
@@ -164,15 +164,17 @@ cc.Class({
                         // 清除所有historyItem
                         self.historyList.removeAllChildren();
                     });
-
+                    
                     self.historyList.addChild(historyItem);
                 }
                 self.historyPanel.active = true;
             break;
 
-            case '101':
+            case '102':
                 // 开始战局回顾
-
+                cc.historyString = msg.steps;
+                // 跳转到回顾场景
+                self.switchReviewScene();
             break;
         }
     },
@@ -282,14 +284,6 @@ cc.Class({
         // }
     },
 
-    // 显示历史战局面板
-    onShowHistoryPanel: function(){
-
-        let cmd = Rson.encode({'code':'101', 'name':'get reviewList', data:{'stepId':historyItem.historyId}});
-        cc.log(cmd);
-        cc.webSocket.send(cmd);
-    },
-
     // 登录面板-登录
     onLoginLogin: function(){
         this.acc = this.account.string;
@@ -354,6 +348,13 @@ cc.Class({
         }
     },
 
+    // 获取历史记录列表
+    onFetchHistoryList: function(){
+        let cmd = Rson.encode({'code':'101', 'name':'fetch historyList', data:{}});
+        cc.log(cmd);
+        cc.webSocket.send(cmd);
+    },
+
     // 显示等待面板
     showWaitingPanel: function(str, mode){
         mode = mode?mode:1;
@@ -394,5 +395,9 @@ cc.Class({
     // 切换到战斗场景
     switchBattleScene: function(){
         cc.director.loadScene('gameScene');
+    },
+
+    switchReviewScene: function(){
+        cc.director.loadScene('reviewScene');
     },
 });

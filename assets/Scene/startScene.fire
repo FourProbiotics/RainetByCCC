@@ -1836,7 +1836,7 @@
       "__id__": 13
     },
     "component": "callbacks",
-    "handler": "onShowHistoryPanel"
+    "handler": "onFetchHistoryList"
   },
   {
     "__type__": "cc.Label",
@@ -5506,7 +5506,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 400,
+      "width": 450,
       "height": 480
     },
     "_children": [
@@ -5550,7 +5550,7 @@
     "__type__": "cc.Node",
     "_name": "scrollBar",
     "_objFlags": 0,
-    "_opacity": 255,
+    "_opacity": 0,
     "_color": {
       "__type__": "cc.Color",
       "r": 238,
@@ -5583,7 +5583,7 @@
     "_scaleY": 1,
     "_position": {
       "__type__": "cc.Vec2",
-      "x": 200,
+      "x": 225,
       "y": 0
     },
     "_skewX": 0,
@@ -5754,7 +5754,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 320,
+      "width": 390,
       "height": 145
     },
     "_children": [],
@@ -5807,7 +5807,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 360,
+      "width": 390,
       "height": 480
     },
     "_children": [
@@ -5862,7 +5862,7 @@
     "_enabled": true,
     "_layoutSize": {
       "__type__": "cc.Size",
-      "width": 320,
+      "width": 390,
       "height": 145
     },
     "_resize": 1,

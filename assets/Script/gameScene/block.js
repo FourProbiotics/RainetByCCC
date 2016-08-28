@@ -7,7 +7,7 @@ cc.Class({
         // 激活状态表示目标棋子能够移动到这点
         canPass: false,
         posX:0,
-        posY:0
+        posY:0,
 
     },
 
@@ -19,6 +19,9 @@ cc.Class({
         });
         cc.loader.loadRes("Prefab/BWall", (err, wall) => {
             this.BWall = cc.instantiate(wall);
+        });
+        cc.loader.loadRes("Prefab/sheild", (err, sheild) => {
+            this.sheild = cc.instantiate(sheild);
         });
     	
     },
@@ -56,14 +59,18 @@ cc.Class({
         if(judge && !this.hasLineBoost){
             this.hasFireWall = true;
             let fw = (group == 'G')?this.GWall : this.BWall;
+            let shield = this.sheild;
             let wallTag = (group == 'G')?7 : 2;
             fw.setTag(wallTag);
             this.node.addChild(fw);
+            shield.setTag(11);
+            this.node.addChild(shield);
 
         }else if(!judge && this.hasFireWall){
             this.hasFireWall = false;
             let wallTag = (group == 'G')?7 : 2;
             this.node.removeChildByTag(wallTag);
+            this.node.removeChildByTag(11);
         }
     },
 

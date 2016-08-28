@@ -69,6 +69,7 @@ cc.Class({
 
     onCloseYes: function(){
         this.canvas.sendData({'code':'90', 'name':'change start', data:{}});
+        this.hide();
         this.schedule(function(){
             cc.director.end();
         }, 4.5, 1);

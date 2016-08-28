@@ -31,8 +31,7 @@ cc.Class({
         this.hide(this.sys);
         if(!this.myTerm)
         {
-            if(!shown)
-                this.hide(this.terminals);
+            this.hide(this.terminals);
             return;
         }
         let shown = this.show(this.terminals);

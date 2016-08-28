@@ -15417,13 +15417,22 @@
     },
     "_enabled": true,
     "bgm01": {
-      "__uuid__": "fe42fcf4-7dde-46f1-b546-801ef427db8c"
+      "__uuid__": "60ff9612-36c5-421e-9c3a-3d7786582212"
     },
     "bgm02": {
-      "__uuid__": "5c489893-0c0d-4204-8142-f8bf53431c4c"
+      "__uuid__": "e3a9800f-0301-4ff7-9f41-cc131ace7e12"
     },
     "bgm03": {
-      "__uuid__": "2ed5529b-6938-4a7e-8b3c-1573ff070f77"
+      "__uuid__": "d93f78e0-b780-4c86-b379-0a84d75b3cf7"
+    },
+    "bgm04": {
+      "__uuid__": "97e30e23-922c-4df6-b7c3-facd74c4a7ae"
+    },
+    "bgm05": {
+      "__uuid__": "aaad5a43-722a-49d1-84a0-f51d5a3ceb44"
+    },
+    "bgm06": {
+      "__uuid__": "de6f8eca-596e-4c4a-9897-9ce7632c5c38"
     },
     "e_link": {
       "__uuid__": "67f1b191-0dfd-44a8-b975-c5312bb898e1"

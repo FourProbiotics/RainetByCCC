@@ -6,6 +6,7 @@ cc.Class({
     extends: cc.Component,
 
     properties: {
+        historyItem: cc.Prefab
     },
 
     // use this for initialization
@@ -39,6 +40,10 @@ cc.Class({
         // 观战信息
         this.visit_password = cc.find('Canvas/operator/choiceLayer/visitLayer/visit/pass').getComponent(cc.EditBox);
         this.visit_room = cc.find('Canvas/operator/choiceLayer/visitLayer/visit/room').getComponent(cc.EditBox);
+        // 历史对局面板
+        this.historyPanel = cc.find('Canvas/historyPanel');
+        // 历史列表
+        this.historyList = cc.find('view/content', this.historyPanel);
 
         // 预加载场景
         cc.director.preloadScene('gameScene', function () {
@@ -134,6 +139,40 @@ cc.Class({
                 // 退出匹配反馈
                 this.operatorLayer.active = true;
                 this.hideWaitingPanel();
+            break;
+
+            case '101':
+                // 获取历史列表
+                if(!msg.test)
+                    return;
+
+                let hsArray = msg.list;
+
+                for(let i in hsArray){
+                    let item = hsArray[i];
+                    let historyItem = cc.instantiate(self.historyItem);
+                    historyItem.historyId = item['Id'];
+                    historyItem.enemyId = item['Uid_1'] == cc.UID ? item['Uid_2'] : item['Uid_1'];
+                    historyItem.getComponent(cc.Label).string = '对局id: '+historyItem.historyId
+                    +'\n对手id: '+historyItem.enemyId+'\n结束时间: '+item['Date'];
+
+                    historyItem.on('touchended', function(){
+                        let cmd = Rson.encode({'code':'102', 'name':'start review', data:{'stepId':historyItem.historyId}});
+                        cc.log(cmd);
+                        cc.webSocket.send(cmd);
+                        self.historyPanel.active = false;
+                        // 清除所有historyItem
+                        self.historyList.removeAllChildren();
+                    });
+
+                    self.historyList.addChild(historyItem);
+                }
+                self.historyPanel.active = true;
+            break;
+
+            case '101':
+                // 开始战局回顾
+
             break;
         }
     },
@@ -241,6 +280,14 @@ cc.Class({
         //     this.v_pas = '';
         //     this.visit_password.string = '';
         // }
+    },
+
+    // 显示历史战局面板
+    onShowHistoryPanel: function(){
+
+        let cmd = Rson.encode({'code':'101', 'name':'get reviewList', data:{'stepId':historyItem.historyId}});
+        cc.log(cmd);
+        cc.webSocket.send(cmd);
     },
 
     // 登录面板-登录

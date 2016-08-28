@@ -134,14 +134,14 @@ cc.Class({
             this.isSound = false;
             this.soundIcon1.active = false;
             this.soundIcon2.active = true;
-            this.soundLabel.string = '开启bgm'
+            this.soundLabel.string = '开启bgm';
 
             cc.audioEngine.setMusicVolume(0);
         }else{
             this.isSound = true;
             this.soundIcon2.active = false;
             this.soundIcon1.active = true;
-            this.soundLabel.string = '静音'
+            this.soundLabel.string = '静音';
 
             cc.audioEngine.setMusicVolume(1);
         }

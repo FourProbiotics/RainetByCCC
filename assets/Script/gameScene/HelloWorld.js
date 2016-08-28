@@ -52,7 +52,8 @@ cc.Class({
         this.sound = this.node.getComponent('Sound');
         this.curTag = 0;
         this.curBgm = 0;
-        this.bgm = [this.sound.bgm01, this.sound.bgm02, this.sound.bgm03];
+        this.bgm = [this.sound.bgm01, this.sound.bgm02, this.sound.bgm03, 
+            this.sound.bgm04, this.sound.bgm05, this.sound.bgm06];
 
         self = this;
         

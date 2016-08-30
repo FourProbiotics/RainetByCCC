@@ -7,7 +7,6 @@ var Rson = {
     decode: function(str){
         var a = JSON.parse(str);
         a.data = JSON.parse(a.data);
-        cc.log(str);
         return a;
     }
 };

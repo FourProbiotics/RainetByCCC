@@ -20,8 +20,8 @@ cc.Class({
         cc.loader.loadRes("Prefab/BWall", (err, wall) => {
             this.BWall = cc.instantiate(wall);
         });
-        cc.loader.loadRes("Prefab/sheild", (err, sheild) => {
-            this.sheild = cc.instantiate(sheild);
+        cc.loader.loadRes("Prefab/shield", (err, shield) => {
+            this.shield = cc.instantiate(shield);
         });
     	
     },
@@ -59,7 +59,7 @@ cc.Class({
         if(judge && !this.hasLineBoost){
             this.hasFireWall = true;
             let fw = (group == 'G')?this.GWall : this.BWall;
-            let shield = this.sheild;
+            let shield = this.shield;
             let wallTag = (group == 'G')?7 : 2;
             fw.setTag(wallTag);
             this.node.addChild(fw);

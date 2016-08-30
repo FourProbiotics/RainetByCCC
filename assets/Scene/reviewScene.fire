@@ -126,9 +126,6 @@
       },
       {
         "__id__": 501
-      },
-      {
-        "__id__": 502
       }
     ],
     "_prefab": null,
@@ -15643,114 +15640,6 @@
     },
     "_fitWidth": true,
     "_fitHeight": false
-  },
-  {
-    "__type__": "280c3rsZJJKnZ9RqbALVwtK",
-    "_name": "",
-    "_objFlags": 0,
-    "node": {
-      "__id__": 2
-    },
-    "_enabled": true,
-    "group": "G",
-    "checkboard": {
-      "__id__": 360
-    },
-    "stateBar": {
-      "__id__": 386
-    },
-    "eventLayer": {
-      "__id__": 486
-    },
-    "pop": {
-      "__id__": 470
-    },
-    "enemyTeam": [
-      {
-        "__id__": 324
-      },
-      {
-        "__id__": 320
-      },
-      {
-        "__id__": 316
-      },
-      {
-        "__id__": 312
-      },
-      {
-        "__id__": 308
-      },
-      {
-        "__id__": 304
-      },
-      {
-        "__id__": 300
-      },
-      {
-        "__id__": 296
-      }
-    ],
-    "myTeam": [
-      {
-        "__id__": 329
-      },
-      {
-        "__id__": 333
-      },
-      {
-        "__id__": 337
-      },
-      {
-        "__id__": 341
-      },
-      {
-        "__id__": 345
-      },
-      {
-        "__id__": 349
-      },
-      {
-        "__id__": 353
-      },
-      {
-        "__id__": 357
-      }
-    ],
-    "p_mass": {
-      "__uuid__": "afc2b3db-d668-4561-9854-496b5e417d33"
-    },
-    "p_click_b": {
-      "__uuid__": "4540d9ac-1060-47e3-bba9-bf79e3a0f82b"
-    },
-    "p_click_g": {
-      "__uuid__": "06acf769-e93d-44af-8175-c74f5e86b138"
-    },
-    "p_fire": {
-      "__uuid__": "96240881-2f61-4b27-bb65-0e8a1dee3197"
-    },
-    "p_danger": {
-      "__uuid__": "603b1db8-140b-41cf-8196-c9810890217e"
-    },
-    "p_honor": {
-      "__uuid__": "43d7345d-f658-4834-b717-ea6789c2f3db"
-    },
-    "P_winback": {
-      "__uuid__": "f25a49a3-5c59-4d27-abcc-7f8d7b88d509"
-    },
-    "bullet": {
-      "__uuid__": "8bfda48c-ef31-49c2-8a91-eadf2cce7d43"
-    },
-    "gamestart": false,
-    "vnum": 0,
-    "lnum": 0,
-    "lbSwitch": false,
-    "nfSwitch": false,
-    "fwSwitch": false,
-    "vcSwitch": false,
-    "reConnect": false,
-    "myServerSize": 0,
-    "enemyServerSize": 0
   },
   {
     "__type__": "cea24OjCNNATr3bocY3ubHl",

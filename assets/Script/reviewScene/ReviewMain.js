@@ -61,13 +61,18 @@ cc.Class({
         cc.loader.loadRes(this.plistUrl, cc.SpriteAtlas,(err,atlas)=>{
             // 全局变量 图集
             cc.Tex1 = atlas;
-            // 发送准备完成消息
-            this.sendData({'code':'20', 'name':'prepared', data:{}});
+            // 准备完成后解析战报
+            this.battleSteps = JSON.parse(cc.historyString);
+            // 战报当前位置指针
+            this.point = -1;
+            // 循环遍历battleSteps，去除中间的无效项
+            let steps = this.battleSteps;
+            for(let i = steps.length - 1;i >= 0;i--)
+            {
+                if(steps[i].indexOf("\"name\":") > 0)
+                    steps.splice(i,1);
+            }
         });
-
-        // 更改响应回调函数
-        cc.webSocket.onmessage = this.onWSMsg;
-        cc.webSocket.onclose = this.onWSClose;
 
         // 添加场景点击反馈侦听
         let listenerObj = {
@@ -87,9 +92,20 @@ cc.Class({
         this.clickListener = cc.eventManager.addListener(listenerObj, this.eventLayer);
     },
 
-    // 战斗时websocket回调
-    onWSMsg: function(event){
-        var data = Rson.decode(event.data);
+    // 运行或退回某一步骤
+    // @isFoward : bool  若是前进一步则为true，后退为false
+    runStep: function(isFoward){
+        if(isFoward && this.point >= -1 && this.point < this.battleSteps.length - 1){
+            this.onWSMsg(this.battleSteps[++this.point]);
+
+        }else if(!isFoward && this.point > 0 && this.point < this.battleSteps.length + 1){
+            this.onBack(this.battleSteps[this.point--]);
+        }
+    },
+
+    // 模拟战斗时websocket回调
+    onWSMsg: function(data){
+        var data = Rson.decode(data);
         var msg = data.data;
         cc.log("serversend: code: " + data.code + ' data: ' + msg + ' to: ' + data.to);
 
@@ -493,8 +509,8 @@ cc.Class({
         }
     },
 
-    // 战斗场景ws关闭回调
-    onWSClose: function(event){
+    // 回退函数
+    onBack: function(data){
         ;
     },
 

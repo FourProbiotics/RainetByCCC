@@ -129,7 +129,7 @@ cc.Class({
                         }
                     }
                 };
-                self.schedule(self.bgmScheduleFunc, 5, 170);
+                self.schedule(self.bgmScheduleFunc, 5);
 
                 self.playSound('begin');
 
@@ -141,8 +141,9 @@ cc.Class({
 
                 // 回合开始
                 self.setTips('你的回合，现在可以进行棋子移动');
-                // 移除现有棋子事件侦听
-                self.removeMyChessEvent();
+                // 移除现有事件侦听
+                self.removeAllBoardEvent();
+                self.removeTerminalChoose();
                 // 添加侦听
                 self.addChessChooseEvent();
                 self.addTerminalChoose();
@@ -231,6 +232,8 @@ cc.Class({
 
                         self.addFWEvent(msg.target);
                     }else{
+                        // 音效
+                        self.playSound('wall');
                         // 移除己方现有防火墙
                         self.setFireWall(self.group, msg.target['x'], msg.target['y'], false);
                         // 回合结束
@@ -478,11 +481,11 @@ cc.Class({
                 {
                     self.setTips("游戏结束，我方获胜");
                     // 展示胜利演出
-                    self.showEndEffect(true);
+                    self.showEndEffect(msg.identify, true);
                 }else{
                     self.setTips('游戏结束，'+self.enemyName+'获胜');
                     // 展示失败演出
-                    self.showEndEffect(false);
+                    self.showEndEffect(msg.identify, false);
                 }
 
                 // 9秒后返回开始场景
@@ -499,7 +502,23 @@ cc.Class({
     },
 
     // 结束游戏演出
-    showEndEffect: function(isWinner){
+    showEndEffect: function(identify, isWinner){
+        // 翻开全部对方棋子
+        for(let i = 0;i < identify.length;i++)
+        {
+            for(let k = 0;k < 8;k++)
+            {
+                let iden = identify[i];
+                if(iden['group'] == self.enemyGroup){
+                    let ec = self.enemyTeam[k].getComponent('Chess');
+                    if(ec.grpNum == iden['no']){
+                        ec.changeType(iden['type']);
+                        break;
+                    }
+                }
+            }
+        }
+
         if(isWinner)
         {
             // 音效

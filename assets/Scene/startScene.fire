@@ -5875,7 +5875,7 @@
     "_N$startAxis": 0,
     "_N$padding": 10,
     "_N$spacingX": 0,
-    "_N$spacingY": 0,
+    "_N$spacingY": 20,
     "_N$verticalDirection": 1,
     "_N$horizontalDirection": 0
   },

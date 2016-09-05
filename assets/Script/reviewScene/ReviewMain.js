@@ -33,7 +33,7 @@ cc.Class({
         nfSwitch: false,
         fwSwitch: false,
         vcSwitch: false,
-        reConnect: false,
+        arrowCanPress: true,
         myServerSize: 0,
         enemyServerSize: 0,
         captureL: 0,
@@ -125,20 +125,51 @@ cc.Class({
         if(isFoward && this.point > this.bottomPoint && this.point < this.battleSteps.length - 1){
             this.onWSMsg(this.battleSteps[++this.point]);
 
-        }else if(!isFoward && this.point > 0 && this.point < this.battleSteps.length + 1){
+        }else if(!isFoward && this.point > this.bottomPoint + 1 && this.point < this.battleSteps.length + 1){
             this.onBack(this.doneTable.pop());
             this.point--;
         }
+    },
+
+    // 给 返回ui 的回调函数
+    onArrowBack: function(){
+        if(self.arrowCanPress){
+            // 点击前进/后退按钮后有0.7秒硬直
+            self.arrowCanPress = false;
+            self.runStep(false);
+            self.schedule(function(){
+                self.arrowCanPress = true;
+            }, 0.7, 1);
+        }
+    },
+    // 给 前进ui 的回调函数
+    onArrowAhead: function(){
+        if(self.arrowCanPress){
+            // 点击前进/后退按钮后有0.5秒硬直
+            self.arrowCanPress = false;
+            self.runStep(true);
+            self.schedule(function(){
+                self.arrowCanPress = true;
+            }, 0.7, 1);
+        }
+    },
+
+    // 退出回放系统
+    closePop: function(){
+        var pop = this.pop.getComponent('Pop');
+        pop.show('reviewClose');
     },
 
     // 模拟战斗时websocket回调
     onWSMsg: function(data){
         var data = Rson.decode(data);
         var msg = data.data;
-        cc.log("Forward: code: " + data.code + ' data: ' + msg + ' to: ' + data.to);
+        cc.log("Forward: code: ", data.code, ' data: ', msg, ' to: ', data.to);
 
         switch(data.code){
             case '21':
+                //tips
+                self.setTips('游戏开始');
                 // 记录已执行命令
                 self.doneTable.push({'code':data.code, 'to':data.to, 'room':msg.room, 'myName':msg.myName, 'enemyName':msg.enemyName, 'group':msg.group});
 
@@ -147,14 +178,15 @@ cc.Class({
                 if(data.to != cc.UID && !self.checkedUser){
                     self.checkedUser = 1;
                     return;
-                }else if(data.to != cc.UID && self.checkedUser == 1){
+                }else if(data.to != cc.UID && self.checkedUser === 1){
                     self.checkedUser = 2;
                     self.UID = data.to;
-                }else if(!self.checkedUser || self.checkedUser == 1){
+                }else if(!self.checkedUser || self.checkedUser === 1){
                     self.UID = data.to;
-                    self.checkedUser = 0;
+                    self.checkedUser = 3;
                 }else
                     return;
+                cc.log('checkedUser: '+self.checkedUser);
 
                 self.room = msg.room;
                 self.setRoom(msg.room);
@@ -165,7 +197,7 @@ cc.Class({
                 self.changeMap(msg.group);
 
                 // 是否开局显示棋子身份?
-                if(!self.checkedUser || self.checkedUser == 1)
+                if(self.checkedUser == 3)
                 {
                     self.checkedUser = true;
                     let idens = self.finalCode.identify;
@@ -177,13 +209,13 @@ cc.Class({
                             if(iden['group'] == self.group){
                                 let mc = self.myTeam[k].getComponent('Chess');
                                 if(mc.grpNum == iden['no']){
-                                    mc.changeType(iden['type']);
+                                    mc.changeType(iden['type']?iden['type']:'bottom');
                                     break;
                                 }
                             }else{
                                 let ec = self.enemyTeam[k].getComponent('Chess');
                                 if(ec.grpNum == iden['no']){
-                                    ec.changeType(iden['type']);
+                                    ec.changeType(iden['type']?iden['type']:'bottom');
                                     break;
                                 }
                             }
@@ -220,6 +252,8 @@ cc.Class({
                 {
                     //己方
                     if(!msg.test){
+                        //tips
+                        self.setTips('取消Line Boost');
                         // 音效
                         self.playSound('line');
                         // 摘除已装备的超速回线
@@ -232,6 +266,8 @@ cc.Class({
                     //敌方
                     if(!msg.test)
                     {
+                        //tips
+                        self.setTips('取消Line Boost');
                         // 音效
                         self.playSound('line');
                         // 摘除已装备的超速回线
@@ -243,6 +279,8 @@ cc.Class({
             break;
 
             case '33':
+                //tips
+                self.setTips('装备Line Boost');
                 // 记录已执行命令
                 self.doneTable.push({'code':data.code, 'to':data.to, 'test':msg.test, 'target':msg.target});
 
@@ -276,6 +314,8 @@ cc.Class({
                 // 防火墙 反馈
                 if(data.to == self.UID){
                     if(!msg.test){
+                        //tips
+                        self.setTips('取消Fire Wall');
                         // 音效
                         self.playSound('wall');
                         // 移除己方现有防火墙
@@ -287,6 +327,8 @@ cc.Class({
                 }else{
                     if(!msg.test)
                     {
+                        //tips
+                        self.setTips('取消Fire Wall');
                         // 音效
                         self.playSound('wall');
                         // 移除己方现有防火墙
@@ -298,6 +340,8 @@ cc.Class({
             break;
 
             case '43':
+                //tips
+                self.setTips('放置Fire Wall');
                 // 记录已执行命令
                 self.doneTable.push({'code':data.code, 'to':data.to, 'test':msg.test, 'target':msg.target});
 
@@ -325,6 +369,8 @@ cc.Class({
             break;
 
             case '53':
+                //tips
+                self.setTips('发动Virus Checker');
                 // 记录已执行命令
                 self.doneTable.push({'code':data.code, 'to':data.to, 'test':msg.test, 'target':msg.target, 'result':msg.result});
 
@@ -349,9 +395,8 @@ cc.Class({
             break;
 
             case '63':
-                // 记录已执行命令
-                self.doneTable.push({'code':data.code, 'to':data.to, 'test':msg.test, 'no1':msg.no1, 'no2':msg.no2, 'check':msg.check});
-
+                //tips
+                self.setTips('发动404 Not Found');
                 // 音效
                 self.playSound('exchange');
                 self.playSound('nf');
@@ -360,32 +405,54 @@ cc.Class({
                 {
                     if(msg.test)
                     {
-                        self.switchChess(self.group, msg.no1, msg.no2, msg.check);
+                        // 记录已执行命令
+                        let c_no1 = self.myTeam[msg.no1-1].getComponent('Chess');
+                        let c_no2 = self.myTeam[msg.no2-1].getComponent('Chess');
+                        self.doneTable.push({'code':data.code, 'to':data.to, 'test':msg.test, 
+                        'no1':msg.no1, 'no2':msg.no2, 'check':msg.check, 'checked1':c_no1.checked?c_no1.type:false, 'checked2':c_no2.checked?c_no2.type:false});
+                        // 交换
+                        self.switchChess(self.group, msg.no1, msg.no2, msg.check, null);
                         // 回合结束
                         self.turnEnd();
                     }else
                         cc.log(msg.error);
                 }else{
-                    if(msg.test)
-                        self.switchChess(self.enemyGroup, msg.no1, msg.no2, msg.check);
+                    if(msg.test){
+                        // 记录已执行命令
+                        let c_no1 = self.enemyTeam[msg.no1-1].getComponent('Chess');
+                        let c_no2 = self.enemyTeam[msg.no2-1].getComponent('Chess');
+                        self.doneTable.push({'code':data.code, 'to':data.to, 'test':msg.test, 
+                        'no1':msg.no1, 'no2':msg.no2, 'check':msg.check, 'checked1':c_no1.checked?c_no1.type:false, 'checked2':c_no2.checked?c_no2.type:false});
+                        // 交换
+                        self.switchChess(self.enemyGroup, msg.no1, msg.no2, msg.check, null);
+                    }
                 }
             break;
 
             case '73':
+                //tips
+                self.setTips('移动棋子');
                 // 记录已执行命令
                 let myChess = self.myTeam[msg.target-1].getComponent('Chess');
+                let enemyChess = self.enemyTeam[msg.target-1].getComponent('Chess');
+                let eatenChess;
+                
+                let result = msg.result;
                 if(msg.result['type'] == 1)
-                    self.doneTable.push({'code':data.code, 'to':data.to, 'test':msg.test, 'target':msg.target, 'result':msg.result, 'origin':{'x':myChess.posX, 'y':myChess.posY} });
+                    self.doneTable.push({'code':data.code, 'to':data.to, 'test':msg.test, 'target':msg.target, 'result':msg.result, 
+                    'origin':{'x':(data.to==self.UID?myChess:enemyChess).posX, 'y':(data.to==self.UID?myChess:enemyChess).posY} });
 
                 else if(msg.result['type'] == 2){
-                    let enemyChess = self.enemyTeam[msg.result['eno']-1].getComponent('Chess');
+                    eatenChess = (data.to==self.UID?self.enemyTeam:self.myTeam)[msg.result['eno']-1].getComponent('Chess');
+                    
                     self.doneTable.push({'code':data.code, 'to':data.to, 'test':msg.test, 'target':msg.target, 'result':msg.result, 
-                    'origin':{'x':myChess.posX, 'y':myChess.posY, 'echecked':enemyChess.checked, 'elb':result['moveLB'], 'captureL':self.captureL, 'captureV':self.captureV} });
+                    'origin':{'x':(data.to==self.UID?myChess:enemyChess).posX, 'y':(data.to==self.UID?myChess:enemyChess).posY, 
+                    'echecked':eatenChess.checked, 'elb':result['moveLB'], 'captureL':self.captureL, 'captureV':self.captureV} });
 
                 }else{
-                    let myChess = self.myTeam[msg.target-1].getComponent('Chess');
                     self.doneTable.push({'code':data.code, 'to':data.to, 'test':msg.test, 'target':msg.target, 'result':msg.result, 
-                    'origin':{'echecked':myChess.checked, 'lb':result['moveLB'], 'captureL':self.captureL, 'captureV':self.captureV} });
+                    'origin':{'x':(data.to==self.UID?myChess:enemyChess).posX, 'y':(data.to==self.UID?myChess:enemyChess).posY, 
+                    'echecked':(data.to==self.UID?myChess:enemyChess).checked, 'lb':result['moveLB'], 'captureL':self.captureL, 'captureV':self.captureV} });
                 }
 
                 // 音效
@@ -402,7 +469,7 @@ cc.Class({
                         // 若移动模式为进攻（吃了别的棋子）则移除掉对应棋子
                         if(result['type']==2){
 
-                            let script = self.enemyTeam[result['eno']-1].getComponent('Chess');
+                            let script = eatenChess;
                             script.clearAllTag();
 
                             if(self.checkedUser == false)
@@ -428,7 +495,7 @@ cc.Class({
                             if(result['moveLB'])
                                 self.lbSwitch = false;
 
-                            let script = self.myTeam[msg.target-1].getComponent('Chess');
+                            let script = myChess;
                             script.clearAllTag();
                         }
                         // 回合结束
@@ -450,7 +517,7 @@ cc.Class({
                             self.moveChess(self.group, result['eno'], 9-result['ex'],9-result['ey']);
 
                             if(self.checkedUser == false)
-                                self.myTeam[result['eno']-1].getComponent('Chess').changeType(result['etype']);
+                                eatenChess.changeType(result['etype']);
                             if(result['moveLB'])
                                 self.lbSwitch = false;
 
@@ -465,7 +532,7 @@ cc.Class({
                             self.enemyServerSize++;
                             self.moveChess(self.enemyGroup, msg.target, self.enemyServerSize, 9-result['y']);
 
-                            let script = self.enemyTeam[msg.target-1].getComponent('Chess');
+                            let script = enemyChess;
                             script.clearAllTag();
                         }
                     }
@@ -495,7 +562,7 @@ cc.Class({
     // 回退函数
     onBack: function(data){
         var msg = data;
-        cc.log("Back to: code: " + data.code + ' data: ' + msg + ' to: ' + data.to);
+        cc.log("Back to: code: ", data.code, ' data: ', msg, ' to: ', data.to);
 
         switch(data.code){
 
@@ -504,23 +571,29 @@ cc.Class({
                 if(data.to == self.UID)
                 {
                     //己方
-                    if(!msg.test)
+                    if(!msg.test){
+                        //tips
+                        self.setTips('撤销 取消Line Boost');
                         // 摘除已装备的超速回线
                         self.setLineBoost(self.group, msg.target, true);
-                    else
+                    }else
                         self.runStep(false);
                 }else{
                     //敌方
-                    if(!msg.test)
+                    if(!msg.test){
+                        //tips
+                        self.setTips('撤销 取消Line Boost');
                         // 摘除已装备的超速回线
                         self.setLineBoost(self.enemyGroup, msg.target, true);
-                    else
+                    }else
                         self.runStep(false);
                 }
                 
             break;
 
             case '33':
+                //tips
+                self.setTips('撤销 使用Line Boost');
                 // 超速回线 确认
                 if(data.to == self.UID)
                 {
@@ -537,22 +610,28 @@ cc.Class({
             case '41':
                 // 防火墙 反馈
                 if(data.to == self.UID){
-                    if(!msg.test)
+                    if(!msg.test){
+                        //tips
+                        self.setTips('撤销 取消Fire Wall');
                         // 移除己方现有防火墙
                         self.setFireWall(self.group, msg.target['x'], msg.target['y'], true);
-                    else
+                    }else
                         self.runStep(false);
                 }else{
-                    if(!msg.test)
+                    if(!msg.test){
+                        //tips
+                        self.setTips('撤销 取消Fire Wall');
                         // 移除己方现有防火墙
                         self.setFireWall(self.enemyGroup, 9-msg.target['x'], 9-msg.target['y'], true);
-                    else
+                    }else
                         self.runStep(false);
                 }
                 
             break;
 
             case '43':
+                //tips
+                self.setTips('撤销 使用Fire Wall');
                 // 防火墙 确认
                 if(data.to == self.UID)
                 {
@@ -568,6 +647,8 @@ cc.Class({
             break;
 
             case '53':
+                //tips
+                self.setTips('撤销 使用Virus Checker');
                 // 探查 结束
                 if(data.to == self.UID)
                 {
@@ -581,18 +662,22 @@ cc.Class({
             break;
 
             case '63':
+                //tips
+                self.setTips('撤销 使用 404 Not Found');
                 // 交换 确认
                 if(data.to == self.UID)
                 {
                     if(msg.test)
-                        self.switchChess(self.group, msg.no1, msg.no2, msg.check);
+                        self.switchChess(self.group, msg.no1, msg.no2, msg.check, new Array(msg.checked1, msg.checked2));
                 }else{
                     if(msg.test)
-                        self.switchChess(self.enemyGroup, msg.no1, msg.no2, msg.check);
+                        self.switchChess(self.enemyGroup, msg.no1, msg.no2, msg.check, new Array(msg.checked1, msg.checked2));
                 }
             break;
 
             case '73':
+                //tips
+                self.setTips('撤销 移动棋子');
                 // 棋子移动 确认
                 if(data.to == self.UID)
                 {
@@ -644,7 +729,7 @@ cc.Class({
                     {
                         let result = msg.result;
                         let origin = msg.origin;
-                        self.moveChess(self.enemyGroup, msg.target, 9-origin['x'], 9-origin['y']);
+                        self.moveChess(self.enemyGroup, msg.target, origin['x'], origin['y']);
 
                         // 若移动模式为进攻（吃了别的棋子）则移除掉对应棋子
                         if(result['type']==2){
@@ -683,7 +768,6 @@ cc.Class({
             break;
 
             case '91':
-                // 游戏结束
                 self.runStep(false);
             break;
         }
@@ -782,7 +866,8 @@ cc.Class({
     // @c1: 第一个指定棋子在数组中的下标+1
     // @c2: 第二个指定棋子在数组中的下标+1
     // @isSwitch: 是否交换
-    switchChess: function(group, c1, c2, isSwitch){
+    // @checkBack: 是否回退check状态 数组
+    switchChess: function(group, c1, c2, isSwitch, checkBack){
         // 获得指定chess对象
         var chess1, chess2, team;
         team = this.group==group?this.myTeam:this.enemyTeam;
@@ -805,21 +890,35 @@ cc.Class({
         // 回调函数用以去掉switch、check标记并重置敌方棋子至背面并设置line boost交换情况
         func1 = cc.callFunc(()=>{
             c1Script.setSwitchTag(false);
-            c1Script.setCheckTag(false);
-            if(this.group!=group && !self.checkedUser)
-                c1Script.changeType('bottom');
-            else
-                c1Script.setCheckTag(false);
+
+            if(!checkBack || !checkBack[0]){
+                if(!self.checkedUser)
+                    c1Script.changeType('bottom');
+                else
+                    c1Script.setCheckTag(false);
+            }else{
+                if(!self.checkedUser)
+                    c1Script.changeType(checkBack[0]);
+                else
+                    c1Script.setCheckTag(true);
+            }
             
             c1Script.setLineBoost(lbSet1);
         }, this);
         func2 = cc.callFunc(()=>{
             c2Script.setSwitchTag(false);
-            c2Script.setCheckTag(false);
-            if(this.group!=group && !self.checkedUser)
-                c2Script.changeType('bottom');
-            else
-                c1Script.setCheckTag(false);
+            
+            if(!checkBack || !checkBack[1]){
+                if(!self.checkedUser)
+                    c2Script.changeType('bottom');
+                else
+                    c2Script.setCheckTag(false);
+            }else{
+                if(!self.checkedUser)
+                    c2Script.changeType(checkBack[1]);
+                else
+                    c2Script.setCheckTag(true);
+            }
 
             c2Script.setLineBoost(lbSet2);
         }, this);
@@ -1080,9 +1179,7 @@ cc.Class({
     },
 
     // 回合结束时处理所有侦听
-    turnEnd:function()
-    {
+    turnEnd:function(){
         cc.log('回合结束');
-        this.setTips('对手的回合');
     }
 });

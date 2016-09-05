@@ -15,6 +15,7 @@ cc.Class({
     // use this for initialization
     onLoad: function () {
         this.canvas = cc.find('Canvas').getComponent('HelloWorld');
+        this.reviewMain = cc.find('Canvas').getComponent('ReviewMain');
         this.terminals = cc.find('Canvas/terminals');
         this.sysPanel = cc.find('Canvas/sysPanel');
         this.lb = cc.find('Canvas/terminals/lineBoost');
@@ -129,6 +130,11 @@ cc.Class({
         this.canvas.showPop('close');
     },
 
+    onReviewClose: function(){
+        this.hide(this.sysPanel);
+        this.reviewMain.closePop();
+    },
+
     onSysSound: function(){
         if(this.isSound){
             this.isSound = false;
@@ -141,7 +147,7 @@ cc.Class({
             this.isSound = true;
             this.soundIcon2.active = false;
             this.soundIcon1.active = true;
-            this.soundLabel.string = '静音';
+            this.soundLabel.string = '关闭bgm';
 
             cc.audioEngine.setMusicVolume(1);
         }

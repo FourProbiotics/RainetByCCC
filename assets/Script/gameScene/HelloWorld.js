@@ -491,7 +491,7 @@ cc.Class({
                 // 9秒后返回开始场景
                 self.schedule(function() {
                     cc.director.loadScene('startScene');
-                }, 9, 1);
+                }, 7, 1);
             break;
         }
     },
@@ -849,7 +849,7 @@ cc.Class({
         // 回调函数用以去掉switch、check标记并重置敌方棋子至背面并设置line boost交换情况
         func1 = cc.callFunc(()=>{
             c1Script.setSwitchTag(false);
-            c1Script.setCheckTag(false);
+
             if(this.group!=group)
                 c1Script.changeType('bottom');
             else
@@ -859,11 +859,11 @@ cc.Class({
         }, this);
         func2 = cc.callFunc(()=>{
             c2Script.setSwitchTag(false);
-            c2Script.setCheckTag(false);
+            
             if(this.group!=group)
                 c2Script.changeType('bottom');
             else
-                c1Script.setCheckTag(false);
+                c2Script.setCheckTag(false);
 
             c2Script.setLineBoost(lbSet2);
         }, this);

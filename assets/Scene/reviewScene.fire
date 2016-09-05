@@ -116,16 +116,16 @@
     "_active": true,
     "_components": [
       {
-        "__id__": 498
-      },
-      {
-        "__id__": 499
-      },
-      {
         "__id__": 500
       },
       {
         "__id__": 501
+      },
+      {
+        "__id__": 502
+      },
+      {
+        "__id__": 503
       }
     ],
     "_prefab": null,
@@ -14048,7 +14048,7 @@
       "__id__": 2
     },
     "component": "btCallFunc",
-    "handler": "onSysClose"
+    "handler": "onReviewClose"
   },
   {
     "__type__": "cc.Node",
@@ -14344,7 +14344,7 @@
       "__uuid__": "2cf1add1-cea0-4852-abcb-d0ee267ccf2a"
     },
     "_isSystemFontUsed": false,
-    "_N$string": "静音",
+    "_N$string": "关闭bgm",
     "_N$horizontalAlign": 1,
     "_N$verticalAlign": 1,
     "_N$overflow": 0
@@ -15304,7 +15304,7 @@
         "__id__": 489
       },
       {
-        "__id__": 493
+        "__id__": 494
       }
     ],
     "_rotationX": 0,
@@ -15327,7 +15327,7 @@
     "_active": true,
     "_components": [],
     "_prefab": {
-      "__id__": 497
+      "__id__": 499
     },
     "groupIndex": 0
   },
@@ -15385,7 +15385,7 @@
       }
     ],
     "_prefab": {
-      "__id__": 492
+      "__id__": 493
     },
     "groupIndex": 0
   },
@@ -15441,7 +15441,11 @@
     "duration": 0.1,
     "pressedSprite": null,
     "hoverSprite": null,
-    "clickEvents": [],
+    "clickEvents": [
+      {
+        "__id__": 492
+      }
+    ],
     "_N$interactable": true,
     "_N$normalColor": {
       "__type__": "cc.Color",
@@ -15462,6 +15466,14 @@
     "_N$target": {
       "__id__": 489
     }
+  },
+  {
+    "__type__": "cc.ClickEvent",
+    "target": {
+      "__id__": 2
+    },
+    "component": "ReviewMain",
+    "handler": "onArrowBack"
   },
   {
     "__type__": "cc.PrefabInfo",
@@ -15520,14 +15532,14 @@
     "_active": true,
     "_components": [
       {
-        "__id__": 494
+        "__id__": 495
       },
       {
-        "__id__": 495
+        "__id__": 496
       }
     ],
     "_prefab": {
-      "__id__": 496
+      "__id__": 498
     },
     "groupIndex": 0
   },
@@ -15536,7 +15548,7 @@
     "_name": "",
     "_objFlags": 0,
     "node": {
-      "__id__": 493
+      "__id__": 494
     },
     "_enabled": true,
     "_spriteFrame": {
@@ -15562,7 +15574,7 @@
     "_name": "",
     "_objFlags": 0,
     "node": {
-      "__id__": 493
+      "__id__": 494
     },
     "_enabled": true,
     "transition": 1,
@@ -15583,7 +15595,11 @@
     "duration": 0.1,
     "pressedSprite": null,
     "hoverSprite": null,
-    "clickEvents": [],
+    "clickEvents": [
+      {
+        "__id__": 497
+      }
+    ],
     "_N$interactable": true,
     "_N$normalColor": {
       "__type__": "cc.Color",
@@ -15602,8 +15618,16 @@
     "_N$normalSprite": null,
     "_N$disabledSprite": null,
     "_N$target": {
-      "__id__": 493
+      "__id__": 494
     }
+  },
+  {
+    "__type__": "cc.ClickEvent",
+    "target": {
+      "__id__": 2
+    },
+    "component": "ReviewMain",
+    "handler": "onArrowAhead"
   },
   {
     "__type__": "cc.PrefabInfo",
@@ -15759,9 +15783,11 @@
     "nfSwitch": false,
     "fwSwitch": false,
     "vcSwitch": false,
-    "reConnect": false,
+    "arrowCanPress": true,
     "myServerSize": 0,
-    "enemyServerSize": 0
+    "enemyServerSize": 0,
+    "captureL": 0,
+    "captureV": 0
   },
   {
     "__type__": "9f06bv3k1RFP43NmAamV7Zi",

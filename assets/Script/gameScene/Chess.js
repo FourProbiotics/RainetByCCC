@@ -84,7 +84,7 @@ var Chess = cc.Class({
             posx = -313 + 70*x;
             posy = 315 - 70*y;
         }
-        let moveAction = cc.moveTo(0.5, cc.p(posx, posy));
+        let moveAction = cc.moveTo(0.4, cc.p(posx, posy));
         moveAction.easing(cc.easeIn(0.5));
         this.node.runAction(moveAction);
     },

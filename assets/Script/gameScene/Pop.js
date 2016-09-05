@@ -28,6 +28,7 @@ cc.Class({
                 this.popYes.on(cc.Node.EventType.TOUCH_END, this.onCloseYes, this);
                 this.popNo.on(cc.Node.EventType.TOUCH_END, this.onCloseNo, this);
             break;
+
             case 'switch':
                 this.label.string = '是否交换选定棋子？';
                 this.yesLabel.string = '交换';
@@ -35,6 +36,7 @@ cc.Class({
                 this.popYes.on(cc.Node.EventType.TOUCH_END, this.onSwitchYes, this);
                 this.popNo.on(cc.Node.EventType.TOUCH_END, this.onSwitchNo, this);
             break;
+
             case 'wsclose':
                 this.label.string = '与服务器断开连接，是否重连？';
                 this.yesLabel.string = '重连';
@@ -42,6 +44,13 @@ cc.Class({
                 this.popYes.on(cc.Node.EventType.TOUCH_END, this.onConnectYes, this);
                 this.popNo.on(cc.Node.EventType.TOUCH_END, this.onConnectNo, this);
             break;
+
+            case 'reviewClose':
+                this.label.string = '确定退出回访界面吗？';
+                this.yesLabel.string = '确定';
+                this.noLabel.string = '取消';
+                this.popYes.on(cc.Node.EventType.TOUCH_END, this.onReviewCloseYes, this);
+                this.popNo.on(cc.Node.EventType.TOUCH_END, this.onCloseNo, this);
         }
         var node = this.node;
         if(node.active)
@@ -70,9 +79,6 @@ cc.Class({
     onCloseYes: function(){
         this.canvas.sendData({'code':'90', 'name':'change start', data:{}});
         this.hide();
-        this.schedule(function(){
-            cc.director.end();
-        }, 4.5, 1);
     },
 
     onCloseNo: function(){
@@ -101,4 +107,8 @@ cc.Class({
     onConnectNo: function(){
         this.hide();
     },
+
+    onReviewCloseYes: function(){
+        cc.director.loadScene('startScene');
+    }
 });

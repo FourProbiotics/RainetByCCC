@@ -1,3 +1,5 @@
+window.SOCKET_ADDRESS = 'ws://rainet.cc:12345';
+
 cc.Class({
     extends: cc.Component,
 
@@ -11,7 +13,7 @@ cc.Class({
         // 获得callbacks脚本组件
         this.callbacks = cc.find('callbacks_script').getComponent('callbacks');
         // 初始化websocket
-        cc.webSocket = this.initWebSocket('ws://rainet.cc:12345');
+        cc.webSocket = this.initWebSocket(SOCKET_ADDRESS, null);
     },
 
     randomString: function(len) {
@@ -25,7 +27,7 @@ cc.Class({
     　　return pwd;
     },
 
-    initWebSocket: function(host){
+    initWebSocket: function(host, func){
         var ws = new WebSocket(host);
 
         ws.onopen = this.callbacks.onWSOpen;
@@ -39,12 +41,14 @@ cc.Class({
         setTimeout(function () {
             if (ws.readyState === WebSocket.OPEN) {
                 cc.log("WebSocket ready");
+                if(func)
+                    func();
             }
             else {
                 console.log("WebSocket instance wasn't ready...");
                 ws.close();
             }
-        }, 3000);
+        }, 1000);
         return ws;
     }
 });

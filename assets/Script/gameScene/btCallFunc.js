@@ -22,7 +22,7 @@ cc.Class({
         this.fw = cc.find('Canvas/terminals/fireWall');
         this.vc = cc.find('Canvas/terminals/virusChecker');
         this.nf = cc.find('Canvas/terminals/404');
-        this.talkInput = cc.find('Canvas/fitLayer/buttonBar/talkBox').getComponent(cc.EditBox);
+        this.talkInput = cc.find('Canvas/fitLayer/buttonBar/talkBox');
         this.soundIcon1 = cc.find('Canvas/sysPanel/sound/icon1');
         this.soundIcon2 = cc.find('Canvas/sysPanel/sound/icon2');
         this.soundLabel = cc.find('Canvas/sysPanel/sound/label').getComponent(cc.Label);
@@ -154,8 +154,8 @@ cc.Class({
     },
 
     onSendTalk: function(){
-        let str = this.talkInput.string;
-        this.talkInput.string = '';
+        let str = this.talkInput.getComponent(cc.EditBox).string;
+        this.talkInput.getComponent(cc.EditBox).string = '';
 
         this.sendData({'code':'80', 'name':'sendTalk', data:{'str':str}});
     },

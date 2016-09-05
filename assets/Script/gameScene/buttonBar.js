@@ -72,7 +72,7 @@ cc.Class({
     // 隐藏对象
     // @obj: 将隐藏的对象
     hide: function(obj){
-        if(!obj.active)
+        if(!obj || !obj.active)
             return false;
         var act1=cc.fadeOut(0.15);
         var callback = new cc.CallFunc(function(){

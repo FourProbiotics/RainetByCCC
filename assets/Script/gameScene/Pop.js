@@ -14,6 +14,8 @@ cc.Class({
     // use this for initialization
     onLoad: function () {
         this.canvas = cc.find('Canvas').getComponent('HelloWorld');
+        // 事件拦截
+        this.node.on(cc.Node.EventType.TOUCH_START, function(event){ event.stopPropagation(); }, this);
     },
 
     // 按不同模式显示弹窗

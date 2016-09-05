@@ -49,6 +49,21 @@ cc.Class({
         this.tips = cc.find('Canvas/fitLayer/stateBar/tips').getComponent(cc.Label);
         this.stateBar = cc.find('Canvas/fitLayer/stateBar').getComponent(cc.Sprite);
         this.buttonBar = cc.find('Canvas/fitLayer/buttonBar').getComponent('buttonBar');
+        //0.1s1次不断回滚的文字
+        this.animeLabel = cc.find('Canvas/fitLayer/buttonBar/label').getComponent(cc.Label);
+        let animeCount = 0;
+        this.schedule(function(){
+            let add = 'Reviewing';
+            for(let i = 0;i < animeCount%10;i++)
+            {
+                if(i%2 == 0)
+                    add += ' ';
+                else
+                    add += '.';
+            }
+            self.animeLabel.string = add;
+            animeCount++;
+        }, 0.1);
 
         // sound
         this.sound = this.node.getComponent('Sound');
@@ -134,12 +149,12 @@ cc.Class({
     // 给 返回ui 的回调函数
     onArrowBack: function(){
         if(self.arrowCanPress){
-            // 点击前进/后退按钮后有0.7秒硬直
+            // 点击前进/后退按钮后有0.5秒硬直
             self.arrowCanPress = false;
             self.runStep(false);
             self.schedule(function(){
                 self.arrowCanPress = true;
-            }, 0.7, 1);
+            }, 0.5, 1);
         }
     },
     // 给 前进ui 的回调函数
@@ -150,7 +165,7 @@ cc.Class({
             self.runStep(true);
             self.schedule(function(){
                 self.arrowCanPress = true;
-            }, 0.7, 1);
+            }, 0.5, 1);
         }
     },
 

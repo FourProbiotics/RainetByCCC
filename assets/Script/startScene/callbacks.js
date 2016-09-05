@@ -21,6 +21,8 @@ cc.Class({
         this.waitingIcon = cc.find('Canvas/waitingPanel/icon');
         this.closeRoomBt = cc.find('Canvas/waitingPanel/closeBt');
         this.waitingLabel = cc.find('Canvas/waitingPanel/Label').getComponent(cc.Label);
+        // socket初始化脚本
+        this.initJs = cc.find('Canvas').getComponent('init');
         // 登录信息
         this.choiceLayer = cc.find('Canvas/operator/choiceLayer');
         this.loginPanel = cc.find('Canvas/loginPanel');
@@ -56,7 +58,7 @@ cc.Class({
         // 尝试自动登录
         let power = cc.sys.localStorage.getItem('power');
         // 当本地保存了用户名密码时尝试自动登录，否则需要手动登录
-        if(power != null && power != 'null')
+        if(power != null && power != 'null' && power != '')
         {
             callbacks.autoLogin(power);
         }else{
@@ -147,13 +149,15 @@ cc.Class({
                     return;
 
                 let hsArray = msg.list;
+                // 翻转数组
+                hsArray.reverse();
 
                 for(let i in hsArray){
                     let item = hsArray[i];
                     let historyItem = cc.instantiate(self.historyItem);
                     historyItem.historyId = item['id'];
                     historyItem.enemyId = item['Uid_1'] == cc.UID ? item['Uid_2'] : item['Uid_1'];
-                    historyItem.getComponent(cc.Label).string = '对局id: '+historyItem.historyId
+                    historyItem.getComponent(cc.Label).string = '历史对局 '+ (Number(i)+1) +'\n对局id: '+historyItem.historyId
                     +'\n对手id: '+historyItem.enemyId+'\n结束时间: \n'+item['Date'];
 
                     historyItem.on(cc.Node.EventType.TOUCH_END, function(){
@@ -202,6 +206,8 @@ cc.Class({
 
     onLogout: function(){
         cc.sys.localStorage.setItem('power', '');
+        // 断开websocket连接
+        cc.webSocket.close();
 
         this.loginPanel.active = true;
         this.operatorLayer.active = false;
@@ -295,7 +301,11 @@ cc.Class({
             this.pas = sha1.hex_sha1(this.pas);
             let cmd = Rson.encode({'code':'01', 'name':'login', data:{'username':this.acc, 'password':this.pas}});
             cc.log(cmd);
-            cc.webSocket.send(cmd);
+            if(cc.webSocket && cc.webSocket.readyState === WebSocket.OPEN)
+                cc.webSocket.send(cmd);
+            else{
+                cc.webSocket = this.initJs.initWebSocket(SOCKET_ADDRESS, function(){ cc.webSocket.send(cmd); });
+            }
         }else{
             cc.log('login failed!');
             this.pas = '';

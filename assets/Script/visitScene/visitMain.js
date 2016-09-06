@@ -454,7 +454,7 @@ cc.Class({
                 // 结束演出
                 if(msg.winner == cc.UID)
                 {
-                    self.setTips("游戏结束，我方获胜");
+                    self.setTips("游戏结束，"+self.myName+"获胜");
                     // 展示胜利演出
                     self.showEndEffect(msg.identify, true);
                 }else{
@@ -471,6 +471,28 @@ cc.Class({
 
     // 结束游戏演出
     showEndEffect: function(isWinner){
+        // 翻开全部对方棋子
+        for(let i = 0;i < identify.length;i++)
+        {
+            for(let k = 0;k < 8;k++)
+            {
+                let iden = identify[i];
+                if(iden['group'] == self.enemyGroup){
+                    let ec = self.enemyTeam[k].getComponent('Chess');
+                    if(ec.grpNum == iden['no']){
+                        ec.changeType(iden['type']);
+                        break;
+                    }
+                }else{
+                    let mc = self.myTeam[k].getComponent('Chess');
+                    if(mc.grpNum == iden['no']){
+                        mc.changeType(iden['type']);
+                        break;
+                    }
+                }
+            }
+        }
+
         if(isWinner)
         {
             // 音效

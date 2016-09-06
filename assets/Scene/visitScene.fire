@@ -13813,7 +13813,7 @@
       "__id__": 2
     },
     "component": "btCallFunc",
-    "handler": "onSysClose"
+    "handler": "onVisitClose"
   },
   {
     "__type__": "cc.Node",

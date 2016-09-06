@@ -1,4 +1,3 @@
-var sha1 = require('sha1');
 var Rson = require('Rson');
 var ChessClass = require('Chess');
 

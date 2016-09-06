@@ -16,6 +16,7 @@ cc.Class({
     onLoad: function () {
         this.canvas = cc.find('Canvas').getComponent('HelloWorld');
         this.reviewMain = cc.find('Canvas').getComponent('ReviewMain');
+        this.visitMain = cc.find('Canvas').getComponent('visitMain');
         this.terminals = cc.find('Canvas/terminals');
         this.sysPanel = cc.find('Canvas/sysPanel');
         this.lb = cc.find('Canvas/terminals/lineBoost');
@@ -133,6 +134,11 @@ cc.Class({
     onReviewClose: function(){
         this.hide(this.sysPanel);
         this.reviewMain.closePop();
+    },
+
+    onVisitClose: function(){
+        this.hide(this.sysPanel);
+        this.visitMain.closePop();
     },
 
     onSysSound: function(){

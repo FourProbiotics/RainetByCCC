@@ -48,11 +48,20 @@ cc.Class({
             break;
 
             case 'reviewClose':
-                this.label.string = '确定退出回访界面吗？';
+                this.label.string = '确定退出回放界面吗？';
                 this.yesLabel.string = '确定';
                 this.noLabel.string = '取消';
-                this.popYes.on(cc.Node.EventType.TOUCH_END, this.onReviewCloseYes, this);
+                this.popYes.on(cc.Node.EventType.TOUCH_END, this.switchToStartScene, this);
                 this.popNo.on(cc.Node.EventType.TOUCH_END, this.onCloseNo, this);
+            break;
+
+            case 'visitClose':
+                this.label.string = '确定退出观战界面吗？';
+                this.yesLabel.string = '确定';
+                this.noLabel.string = '取消';
+                this.popYes.on(cc.Node.EventType.TOUCH_END, this.switchToStartScene, this);
+                this.popNo.on(cc.Node.EventType.TOUCH_END, this.onCloseNo, this);
+            break;
         }
         var node = this.node;
         if(node.active)
@@ -110,7 +119,7 @@ cc.Class({
         this.hide();
     },
 
-    onReviewCloseYes: function(){
+    switchToStartScene: function(){
         cc.director.loadScene('startScene');
     }
 });

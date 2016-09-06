@@ -10713,7 +10713,7 @@
       "__uuid__": "2cf1add1-cea0-4852-abcb-d0ee267ccf2a"
     },
     "_isSystemFontUsed": false,
-    "_N$string": "棋子全部设置完毕后将无法更改，请谨慎操作最后一个棋子",
+    "_N$string": "观战模式中观众所发的弹幕对参战玩家来说是不可见的",
     "_N$horizontalAlign": 1,
     "_N$verticalAlign": 1,
     "_N$overflow": 3
@@ -13694,7 +13694,7 @@
       "__uuid__": "2cf1add1-cea0-4852-abcb-d0ee267ccf2a"
     },
     "_isSystemFontUsed": false,
-    "_N$string": "认输/退出",
+    "_N$string": "退出观战",
     "_N$horizontalAlign": 1,
     "_N$verticalAlign": 1,
     "_N$overflow": 0

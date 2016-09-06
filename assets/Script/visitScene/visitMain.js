@@ -71,7 +71,7 @@ cc.Class({
             //设置观战模式，玩家确认为否
             self.checkedUser = false;
             // 更改响应回调函数
-            cc.webSocket.onmessage = this.onWSMsg;
+            cc.webSocket.onmessage = this.WSListener;
             cc.webSocket.onclose = this.onWSClose;
             // 请求地图信息
             this.sendData({'code':'106', 'name':'get map', data:{}});
@@ -124,14 +124,16 @@ cc.Class({
     },
 
     // websocket侦听函数
-    WSListener: function(data){
-        var data = Rson.decode(data);
+    WSListener: function(event){
+        var data = Rson.decode(event.data);
         var msg = data.data;
 
         if(self.wsRecord)
             self.battleSteps.push(data);
         else if(data.code == '106'){
-            self.Map = msg.map;
+            
+            self.Map = JSON.parse(msg.map);
+            cc.log('收到地图数据', data);
             //设置观战模式，玩家确认为否
             self.checkedUser = false;
 
@@ -140,7 +142,7 @@ cc.Class({
             self.setRoom(msg.room);
             self.serverUID = msg.serverUID;
             self.myName = msg.name1;self.enemyName = msg.name2;
-            self.setPlayerNames(msg.myName, msg.enemyName);
+            self.setPlayerNames(self.myName, self.enemyName);
             self.group = 'G';
             self.enemyGroup = 'B';
             self.changeMap('G');
@@ -182,7 +184,7 @@ cc.Class({
 
             case '31':
                 // 超速回线 反馈
-                if(data.to == self.UID)
+                if(data.to == self.serverUID)
                 {
                     //己方
                     if(!msg.test){
@@ -220,7 +222,7 @@ cc.Class({
                 self.playSound('line');
                 self.playSound('lb');
                 // 超速回线 确认
-                if(data.to == self.UID)
+                if(data.to == self.serverUID)
                 {
                     if(msg.test)
                     {
@@ -241,7 +243,7 @@ cc.Class({
 
             case '41':
                 // 防火墙 反馈
-                if(data.to == self.UID){
+                if(data.to == self.serverUID){
                     if(!msg.test){
                         //tips
                         self.setTips('取消Fire Wall');
@@ -276,7 +278,7 @@ cc.Class({
                 self.playSound('wall');
                 self.playSound('fw');
                 // 防火墙 确认
-                if(data.to == self.UID)
+                if(data.to == self.serverUID)
                 {
                     if(msg.test)
                     {
@@ -303,7 +305,7 @@ cc.Class({
                 self.playSound('check');
                 self.playSound('vc');
                 // 探查 结束
-                if(data.to == self.UID)
+                if(data.to == self.serverUID)
                 {
                     if(msg.test)
                     {
@@ -326,7 +328,7 @@ cc.Class({
                 self.playSound('exchange');
                 self.playSound('nf');
                 // 交换 确认
-                if(data.to == self.UID)
+                if(data.to == self.serverUID)
                 {
                     if(msg.test)
                     {
@@ -355,7 +357,7 @@ cc.Class({
                 // 音效
                 self.playSound('move');
                 // 棋子移动 确认
-                if(data.to == self.UID)
+                if(data.to == self.serverUID)
                 {
                     if(msg.test)
                     {
@@ -366,7 +368,7 @@ cc.Class({
                         // 若移动模式为进攻（吃了别的棋子）则移除掉对应棋子
                         if(result['type']==2){
 
-                            let script = (data.to==self.UID?self.enemyTeam:self.myTeam)[msg.result['eno']-1].getComponent('Chess');
+                            let script = (data.to==self.serverUID?self.enemyTeam:self.myTeam)[msg.result['eno']-1].getComponent('Chess');
                             script.clearAllTag();
 
                             if(self.checkedUser == false)
@@ -414,7 +416,7 @@ cc.Class({
                             self.moveChess(self.group, result['eno'], 9-result['ex'],9-result['ey']);
 
                             if(self.checkedUser == false)
-                                (data.to==self.UID?self.enemyTeam:self.myTeam)[msg.result['eno']-1].getComponent('Chess').changeType(result['etype']);
+                                (data.to==self.serverUID?self.enemyTeam:self.myTeam)[msg.result['eno']-1].getComponent('Chess').changeType(result['etype']);
                             if(result['moveLB'])
                                 self.lbSwitch = false;
 
@@ -434,6 +436,12 @@ cc.Class({
                         }
                     }
                 }
+            break;
+
+            case '81':
+                // 弹幕
+                // 对战玩家看不到游客弹幕
+                self.shotBullet(msg.str, msg.sender);
             break;
 
             case '91':
@@ -680,7 +688,7 @@ cc.Class({
         var chess = team[c-1].node.getComponent('Chess');
         
         if(group==this.group || self.checkedUser)
-            chess.setCheckTag(true);
+            chess.changeType(type);
         else{
             chess.changeType(type);
             this.vcSwitch = true;
@@ -709,7 +717,7 @@ cc.Class({
         var ran = Math.ceil(Math.random()*9) - 5;
         var scale = (Math.ceil(Math.random()*21) - 11) / 100 + 1;
         var winWidth = cc.winSize.width;
-        var time = 3.5 + 0.1 * str.length + ran * 0.05;
+        var time = 2 + 0.1 * str.length + ran * 0.05;
         bullet.getComponent(cc.Label).string = str;
         bullet.width = str.length * 25 * scale;
         bullet.height = 40 * scale;

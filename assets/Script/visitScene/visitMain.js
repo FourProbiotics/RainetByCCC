@@ -651,6 +651,7 @@ cc.Class({
         // 开始演出
         var mass = cc.instantiate(this.p_mass);
         mass.setPosition(0, 0);
+        this.node.addChild(mass);
 
         chess1.runAction(seq1);
         chess2.runAction(seq2);

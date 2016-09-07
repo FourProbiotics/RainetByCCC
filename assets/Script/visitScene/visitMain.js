@@ -744,7 +744,7 @@ cc.Class({
         bullet.width = str.length * 25 * scale;
         bullet.height = 40 * scale;
         bullet.setPosition(winWidth / 2 + bullet.width / 2, 40*ran);
-        bullet.color = cc.color(168, 168, 168);
+        bullet.color = cc.color(228, 228, 228);
 
         var seq = cc.sequence(cc.moveBy(time, -winWidth - bullet.width, 0), cc.callFunc(()=>{bullet.removeFromParent();}));
         cc.log(str, time);

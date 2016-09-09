@@ -562,6 +562,31 @@ cc.Class({
                 // self.unschedule(self.bgmScheduleFunc);
                 // cc.audioEngine.pauseMusic();
 
+                if(!self.checkedUser){
+                    // 翻开全部棋子
+                    for(let i = 0;i < msg.identify.length;i++)
+                    {
+                        for(let k = 0;k < 8;k++)
+                        {
+                            let iden = msg.identify[i];
+                            if(iden['group'] == self.enemyGroup){
+                                let ec = self.enemyTeam[k].getComponent('Chess');
+                                if(ec.grpNum == iden['no']){
+                                    ec.changeType(iden['type']);
+                                    break;
+                                }
+                            }else{
+                                let mc = self.myTeam[k].getComponent('Chess');
+                                if(mc.grpNum == iden['no']){
+                                    mc.changeType(iden['type']);
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                    self.checkedUser = true;
+                }
+
                 // 结束演出
                 if(msg.winner == self.UID)
                 {

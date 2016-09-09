@@ -34,11 +34,15 @@ cc.Class({
         this.registerPassword1 = cc.find('Canvas/registerPanel/password').getComponent(cc.EditBox);
         this.registerPassword2 = cc.find('Canvas/registerPanel/passwordAgain').getComponent(cc.EditBox);
         this.registerEmail = cc.find('Canvas/registerPanel/email').getComponent(cc.EditBox);
+
+
         // 创建房间 信息
         this.create_password = cc.find('Canvas/operator/choiceLayer/battleLayer/create/pass').getComponent(cc.EditBox);
         // 加入房间 信息
         this.join_password = cc.find('Canvas/operator/choiceLayer/battleLayer/join/pass').getComponent(cc.EditBox);
         this.join_room = cc.find('Canvas/operator/choiceLayer/battleLayer/join/room').getComponent(cc.EditBox);
+
+
         // 观战信息
         this.visit_password = cc.find('Canvas/operator/choiceLayer/visitLayer/visit/pass').getComponent(cc.EditBox);
         this.visit_room = cc.find('Canvas/operator/choiceLayer/visitLayer/visit/room').getComponent(cc.EditBox);
@@ -46,6 +50,20 @@ cc.Class({
         this.historyPanel = cc.find('Canvas/historyPanel');
         // 历史列表
         this.historyList = cc.find('historyList/view/content', this.historyPanel);
+        // 对局号
+        this.stepsId = cc.find('Canvas/operator/choiceLayer/visitLayer/reviewMore/stepId').getComponent(cc.EditBox);
+        
+
+        // 玩家名
+        this.sysName = cc.find('Canvas/operator/choiceLayer/sysLayer/playerInfo/playerName').getComponent(cc.Label);
+        // id
+        this.sysId = cc.find('Canvas/operator/choiceLayer/sysLayer/playerInfo/playerId').getComponent(cc.Label);
+        // 积分
+        this.sysScore = cc.find('Canvas/operator/choiceLayer/sysLayer/playerInfo/playerScore').getComponent(cc.Label);
+        // 注册时间
+        this.sysRegisterTime = cc.find('Canvas/operator/choiceLayer/sysLayer/playerInfo/registerTime').getComponent(cc.Label);
+        // 特殊称号
+        this.honor = cc.find('Canvas/operator/choiceLayer/sysLayer/playerInfo/honor').getComponent(cc.Label);
 
         // 预加载场景
         cc.director.preloadScene('gameScene', function () {
@@ -79,11 +97,13 @@ cc.Class({
                 {
                     // 保存新的登录验证信息
                     cc.sys.localStorage.setItem('power', msg.power);
+                    // 保存uid
+                    cc.UID = msg.uid;
                     // 显示操作界面
                     self.loginPanel.active = false;
                     self.operatorLayer.active = true;
-                    // 保存uid
-                    cc.UID = msg.uid;
+                    // 显示玩家信息
+                    self.showPlayerInfo(msg.username, msg.uid, msg.score, msg.registerTime, msg.remark);
                 }else{
                     cc.log(msg.error);
                     self.operatorLayer.active = false;
@@ -100,12 +120,15 @@ cc.Class({
                 // 注册反馈
                 if(msg.test)
                 {
+                    // 保存验证信息
                     cc.sys.localStorage.setItem('power', msg.power);
-
-                    self.registerPanel.active = false;
-                    self.operatorLayer.active = true;
                     // 保存uid
                     cc.UID = msg.uid;
+                    // 显示操作界面
+                    self.registerPanel.active = false;
+                    self.operatorLayer.active = true;
+                    // 显示玩家信息
+                    self.showPlayerInfo(msg.username, msg.uid, msg.score, msg.registerTime, msg.remark);
                 }else{
                     cc.log(msg.error);
                     self.operatorLayer.active = false;
@@ -213,6 +236,11 @@ cc.Class({
         this.choiceLayer.runAction(move);
     },
 
+    onSysButton: function(){
+        var move = cc.moveTo(0.2, cc.p(-1230, 0));
+        this.choiceLayer.runAction(move);
+    },
+    //退出登录
     onLogout: function(){
         cc.sys.localStorage.setItem('power', '');
         // 断开websocket连接
@@ -222,6 +250,7 @@ cc.Class({
         this.operatorLayer.active = false;
     },
 
+    // 退出游戏
     onExitButton: function(){
         cc.log('finished');
         cc.director.end();
@@ -348,10 +377,10 @@ cc.Class({
         // 正则表达式
         // 密码长度10~18位，必须包含数字字母，允许数字大小写字母中、下划线
         var pass_reg = /^(?=.{10,18}$)(?![0-9-_]+$)(?![a-zA-Z-_]+$)[0-9a-zA-Z-_]+$/;
-        // 邮箱格式为xxx@xxx.xxx(.xxx)，可以是二级域名邮箱
+        // 邮箱格式为xxx@xxx.xxx[.xxx]，可以是二级域名邮箱
         var email_reg = /^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+((\.[a-zA-Z0-9_-]{2,3}){1,2})$/;
 
-        if(this.r_acc != '' && pass_reg.test(this.r_pas1) && this.r_pas2 === this.r_pas1 && email_reg.test(this.r_email))
+        if(this.r_acc != '' && this.r_acc.length < 15 && pass_reg.test(this.r_pas1) && this.r_pas2 === this.r_pas1 && email_reg.test(this.r_email))
         {
             this.r_pas1 = sha1.hex_sha1(this.r_pas1);
             let cmd = Rson.encode({'code':'02', 'name':'register', data:{'username':this.r_acc, 'password':this.r_pas1, 'email':this.r_email}});
@@ -369,6 +398,17 @@ cc.Class({
     // 获取历史记录列表
     onFetchHistoryList: function(){
         let cmd = Rson.encode({'code':'101', 'name':'fetch historyList', data:{}});
+        cc.log(cmd);
+        cc.webSocket.send(cmd);
+    },
+
+    // 按对局id预览对局
+    onSearchStepsById: function(){
+        let id = this.stepsId.string;
+        if(!id)
+            return;
+
+        let cmd = Rson.encode({'code':'102', 'name':'start review', data:{'stepId':id}});
         cc.log(cmd);
         cc.webSocket.send(cmd);
     },
@@ -413,4 +453,53 @@ cc.Class({
     switchReviewScene: function(){
         cc.director.loadScene('reviewScene');
     },
+
+    // 打开规则
+    onOpenRule: function(){
+        cc.sys.openURL('http://tieba.baidu.com/p/4773429215');
+    },
+
+    // 显示玩家个人信息
+    showPlayerInfo: function(name, id, score, time, honor){
+        // 用户名
+        let sysName = this.sysName;
+        // id
+        let sysId = this.sysId;
+        // 积分
+        let sysScore = this.sysScore;
+        // 注册时间
+        let registerTime = this.sysRegisterTime;
+        // 特殊称号
+        let honorName = this.honor;
+
+        sysName.string = name;
+        sysId.string = id;
+        sysScore.string = score;
+        registerTime.string = time;
+        honorName.string = honor?honor:'无';
+
+        // 根据积分改变字体颜色
+        let color;
+
+        if(score < 10)
+            color = cc.color(238, 238, 238);
+        else if(score < 50)
+            color = cc.color(107, 239, 105);
+        else if(score < 150)
+            color = cc.color(143, 255, 0);
+        else if(score < 400)
+            color = cc.color(186, 169, 255);
+        else if(score < 1000)
+            color = cc.color(89, 47, 255);
+        else
+            color = cc.color(255, 0, 0);
+
+        // 设置颜色
+        sysName.node.color = color;
+        sysId.node.color = color;
+        sysScore.node.color = color;
+        registerTime.node.color = color;
+        honorName.node.color = color;
+    }
+
 });

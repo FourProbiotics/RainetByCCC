@@ -471,7 +471,7 @@ cc.Class({
 
     // 结束游戏演出
     showEndEffect: function(isWinner){
-        // 翻开全部对方棋子
+        // 翻开全部棋子
         for(let i = 0;i < identify.length;i++)
         {
             for(let k = 0;k < 8;k++)

@@ -207,6 +207,10 @@ cc.Class({
             break;
 
             case '102':
+                if(!msg.test){
+                    self.stepsId.string = '';
+                    return;
+                }
                 // 开始战局回顾
                 cc.historyString = msg.steps;
                 // 跳转到回顾场景

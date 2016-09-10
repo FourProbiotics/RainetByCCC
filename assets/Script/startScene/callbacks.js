@@ -221,9 +221,12 @@ cc.Class({
 
     onWSClose: function(event){
         cc.log('websocket will close');
-        let cmd = Rson.encode({'code':'09', 'name':'exit', data:{}});
-        cc.log(cmd);
-        cc.webSocket.send(cmd);
+        if(cc.webSocket.readyState === WebSocket.OPEN)
+        {
+            let cmd = Rson.encode({'code':'09', 'name':'exit', data:{}});
+            cc.log(cmd);
+            cc.webSocket.send(cmd);
+        }
     },
 
     onBattleButton: function(){

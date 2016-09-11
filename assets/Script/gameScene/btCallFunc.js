@@ -14,7 +14,7 @@ cc.Class({
 
     // use this for initialization
     onLoad: function () {
-        this.canvas = cc.find('Canvas').getComponent('HelloWorld');
+        this.gameMain = cc.find('Canvas').getComponent('HelloWorld');
         this.reviewMain = cc.find('Canvas').getComponent('ReviewMain');
         this.visitMain = cc.find('Canvas').getComponent('visitMain');
         this.terminals = cc.find('Canvas/terminals');
@@ -32,10 +32,10 @@ cc.Class({
     onLineBoost: function(){
         this.hide(this.terminals);
         
-        if(!this.canvas.lbSwitch)
+        if(!this.gameMain.lbSwitch)
         {
             if(!this.lbOpen){
-                this.canvas.removeAllBoardEvent();
+                this.gameMain.removeAllBoardEvent();
 
                 this.sendData({'code':'30', 'name':'start LB', data:{}});
                 this.lbOpen = true;
@@ -45,7 +45,7 @@ cc.Class({
                 this.lb.color = new cc.Color(128, 128, 128);
             }else{cc.log('进入lineboost回调2');
                 this.lbOpen = false;
-                this.canvas.removeLBEvent();
+                this.gameMain.removeLBEvent();
                 this.lb.color = new cc.Color(255, 255, 255);
             }
         }else{
@@ -58,10 +58,10 @@ cc.Class({
     onFireWall: function(){
         this.hide(this.terminals);
 
-        if(!this.canvas.fwSwitch)
+        if(!this.gameMain.fwSwitch)
         {
             if(!this.fwOpen){
-                this.canvas.removeAllBoardEvent();
+                this.gameMain.removeAllBoardEvent();
                 
                 this.sendData({'code':'40', 'name':'start FW', data:{}});
                 this.fwOpen = true;
@@ -71,7 +71,7 @@ cc.Class({
                 this.fw.color = new cc.Color(128, 128, 128);
             }else{
                 this.fwOpen = false;
-                this.canvas.removeFWEvent();
+                this.gameMain.removeFWEvent();
                 this.fw.color = new cc.Color(255, 255, 255);
             }
         }else{
@@ -85,10 +85,10 @@ cc.Class({
     onVirusChecker: function(){
         this.hide(this.terminals);
 
-        if(!this.canvas.vcSwitch)
+        if(!this.gameMain.vcSwitch)
         {
             if(!this.vcOpen){
-                this.canvas.removeAllBoardEvent();
+                this.gameMain.removeAllBoardEvent();
 
                 this.sendData({'code':'50', 'name':'start VC', data:{}});
                 this.vcOpen = true;
@@ -98,7 +98,7 @@ cc.Class({
                 this.vc.color = new cc.Color(128, 128, 128);
             }else{
                 this.vcOpen = false;
-                this.canvas.removeVCEvent();
+                this.gameMain.removeVCEvent();
                 this.vc.color = new cc.Color(255, 255, 255);
             }
         }
@@ -107,10 +107,10 @@ cc.Class({
     onNotFound: function(){
         this.hide(this.terminals);
 
-        if(!this.canvas.nfSwitch)
+        if(!this.gameMain.nfSwitch)
         {
             if(!this.nfOpen){
-                this.canvas.removeAllBoardEvent();
+                this.gameMain.removeAllBoardEvent();
 
                 this.sendData({'code':'60', 'name':'start NF', data:{}});
                 this.nfOpen = true;
@@ -120,7 +120,7 @@ cc.Class({
                 this.nf.color = new cc.Color(128, 128, 128);
             }else{
                 this.nfOpen = false;
-                this.canvas.removeNFEvent();
+                this.gameMain.removeNFEvent();
                 this.nf.color = new cc.Color(255, 255, 255);
             }
         }
@@ -128,7 +128,7 @@ cc.Class({
 
     onSysClose: function(){
         this.hide(this.sysPanel);
-        this.canvas.showPop('close');
+        this.gameMain.showPop('close');
     },
 
     onReviewClose: function(){
@@ -193,8 +193,11 @@ cc.Class({
 
     // 发送消息给服务端
     sendData: function(cmd){
-        cmd = Rson.encode(cmd);
-        cc.log(cmd);
-        cc.webSocket.send(cmd);
+        if(this.gameMain)
+            this.gameMain.sendData(cmd);
+        else if(this.visitMain)
+            this.visitMain.sendData(cmd);
+        else
+            cc.log('send Data error at btCallFunc');
     },
 });

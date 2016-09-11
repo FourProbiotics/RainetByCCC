@@ -23,6 +23,7 @@ cc.Class({
         cc.loader.loadRes("Prefab/shield", (err, shield) => {
             this.shield = cc.instantiate(shield);
         });
+        this.main = cc.find('Canvas').getComponent('HelloWorld');
     	
     },
     // 设置该点是否能通过
@@ -76,8 +77,6 @@ cc.Class({
 
     // 发送消息给服务端
     sendData: function(cmd){
-        cmd = Rson.encode(cmd);
-        cc.log(cmd);
-        cc.webSocket.send(cmd);
+        this.main.sendData(cmd);
     }
 });

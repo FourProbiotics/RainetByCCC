@@ -95,6 +95,7 @@ cc.Class({
         this.clickListener = cc.eventManager.addListener(listenerObj, this.eventLayer);
 
         // 计时器循环播放背景音乐
+        cc.audioEngine.stopMusic();
         self.bgmScheduleFunc = function(){
             if(!cc.audioEngine.isMusicPlaying())
             {
@@ -470,7 +471,7 @@ cc.Class({
     },
 
     // 结束游戏演出
-    showEndEffect: function(isWinner){
+    showEndEffect: function(identify, isWinner){
         // 翻开全部棋子
         for(let i = 0;i < identify.length;i++)
         {

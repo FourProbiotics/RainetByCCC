@@ -120,6 +120,7 @@ cc.Class({
     },
 
     switchToStartScene: function(){
+        cc.audioEngine.stopMusic();
         cc.director.loadScene('startScene');
     }
 });

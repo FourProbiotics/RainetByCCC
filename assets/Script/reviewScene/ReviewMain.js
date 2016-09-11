@@ -92,9 +92,10 @@ cc.Class({
                 // 移除玩家请求命令
                 if(steps[i].indexOf("\"name\":") > 0)
                     steps.splice(i,1);
-                // 去除23、24、51、61、71、81命令
+                // 去除23、24、51、61、71、81、106命令
                 else if(steps[i].indexOf("\"code\":\"51") > 0 || steps[i].indexOf("\"code\":\"61") > 0 || steps[i].indexOf("\"code\":\"71") > 0
-                || steps[i].indexOf("\"code\":\"23") > 0 || steps[i].indexOf("\"code\":\"24") > 0 || steps[i].indexOf("\"code\":\"81") > 0)
+                || steps[i].indexOf("\"code\":\"23") > 0 || steps[i].indexOf("\"code\":\"24") > 0 || steps[i].indexOf("\"code\":\"81") > 0 
+                || steps[i].indexOf("\"code\":\"106") > 0)
                     steps.splice(i,1);
                 // 获得最终全棋子身份
                 else if(steps[i].indexOf("\"code\":\"91") > 0 && steps[i].indexOf("identify"))
@@ -238,16 +239,19 @@ cc.Class({
                 }else
                     self.checkedUser = false;
 
+                cc.audioEngine.stopMusic();
                 // 计时器循环播放背景音乐
                 self.bgmScheduleFunc = function(){
                     
                     if(!cc.audioEngine.isMusicPlaying())
                     {
-                        if(self.bgm.length > self.curBgm)
+                        if(self.bgm.length > self.curBgm){
                             cc.audioEngine.playMusic(self.bgm[self.curBgm++], false);
-                        else{
+                            // cc.audioEngine.stopMusic();
+                        }else{
                             self.curBgm = 0;
                             cc.audioEngine.playMusic(self.bgm[self.curBgm++], false);
+                            // cc.audioEngine.stopMusic();
                         }
                     }
                 };

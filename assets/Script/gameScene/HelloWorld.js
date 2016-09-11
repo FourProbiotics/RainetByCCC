@@ -69,6 +69,12 @@ cc.Class({
         cc.webSocket.onmessage = this.onWSMsg;
         cc.webSocket.onclose = this.onWSClose;
 
+        // 调度计时器每10秒检测一次websocket连接情况
+        self.schedule(function(){
+            if (cc.webSocket.readyState !== WebSocket.OPEN)
+                this.sendData({'code':'1000', 'name':'reConnect', data:{}});
+        }, 10);
+
         // 添加场景点击反馈侦听
         let listenerObj = {
             event: cc.EventListener.TOUCH_ONE_BY_ONE,
@@ -117,10 +123,12 @@ cc.Class({
                 }
 
                 // 计时器循环播放背景音乐
+                cc.audioEngine.stopMusic();
                 self.bgmScheduleFunc = function(){
                     
                     if(!cc.audioEngine.isMusicPlaying())
                     {
+                        cc.log('bgm播放', self.bgm.length);
                         if(self.bgm.length > self.curBgm)
                             cc.audioEngine.playMusic(self.bgm[self.curBgm++], false);
                         else{
@@ -474,7 +482,7 @@ cc.Class({
                 // 游戏结束
                 // 停止bgm回调并静音
                 self.unschedule(self.bgmScheduleFunc);
-                cc.audioEngine.pauseMusic();
+                cc.audioEngine.stopMusic();
 
                 // 结束演出
                 if(msg.winner == cc.UID)
@@ -492,6 +500,34 @@ cc.Class({
                 self.schedule(function() {
                     cc.director.loadScene('startScene');
                 }, 9, 1);
+            break;
+            
+            case '106':
+            // 接收地图信息
+
+                // 解析地图
+                let map = JSON.parse(msg.map).map;
+                for(let i in map)
+                {
+                    let obj = map[i];
+                    //对方棋子
+                    if(obj.group === self.enemyGroup){
+                        if(obj.no){
+                            self.moveChess(obj.group, obj.no, obj.x, obj.y);
+                            if(obj.show)
+                                self.enemyTeam.getComponent("Chess").changeType(obj.type);
+                            if(obj.lineBoost)
+                                self.setLineBoost(obj.group, obj.no, true);
+                        }
+                        //墙
+                        else
+                            self.setFireWall(obj.group, obj.x, obj.y, true);
+                    }else{
+                        if(obj.no && obj.show)
+                            self.myTeam.getComponent("Chess").setCheckTag(true);
+                    }
+
+                }
             break;
         }
     },
@@ -1030,6 +1066,9 @@ cc.Class({
 
         // 若连接中断则重连后再发送消息
         if (cc.webSocket.readyState !== WebSocket.OPEN) {
+            // 记录当前待发送信息
+            this.toSendData = cmd;
+            // 断开重连
             cc.webSocket.close();
             this.initWebSocket();
             setTimeout(function() {
@@ -1041,8 +1080,10 @@ cc.Class({
                 this.reConnect = false;
                 // 将验证信息与原本要发送的数据打包传给服务器
                 let rcmd = {'code':'120', 'name':'reconnect', 
-                data:{'power':cc.sys.localStorage.getItem('power'), 'room':this.room, 'send':Rson.encode(cmd)}};
+                data:{'power':cc.sys.localStorage.getItem('power'), 'room':this.room, 'send':Rson.encode(this.toSendData)}};
+                this.toSendData = null;
                 cc.log(rcmd);
+                rcmd = Rson.encode(rcmd);
                 cc.webSocket.send(rcmd);
                 return;
             }
@@ -1194,7 +1235,7 @@ cc.Class({
         cc.log('重新连接服务器');
         this.reConnect = true;
         if (cc.webSocket) {
-            cc.webSocket = new WebSocket("ws://rainet.cc:12345");
+            cc.webSocket = new WebSocket(SOCKET_ADDRESS);
             cc.webSocket.onmessage = this.onWSMsg;
         }
     },

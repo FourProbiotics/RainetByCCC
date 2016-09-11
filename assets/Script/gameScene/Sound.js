@@ -27,6 +27,12 @@ cc.Class({
 
     // use this for initialization
     onLoad: function () {
+        // this.bgm01 = cc.url.raw("resources/Music/bgm01.mp3");
+        // this.bgm02 = cc.url.raw("resources/Music/bgm02.mp3");
+        // this.bgm03 = cc.url.raw("resources/Music/bgm03.mp3");
+        // this.bgm04 = cc.url.raw("resources/Music/bgm04.mp3");
+        // this.bgm05 = cc.url.raw("resources/Music/bgm05.mp3");
+        // this.bgm06 = cc.url.raw("resources/Music/bgm06.mp3");
     },
 
 });

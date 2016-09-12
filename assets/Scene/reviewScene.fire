@@ -40,7 +40,8 @@
     "_globalZOrder": 0,
     "_tag": -1,
     "_opacityModifyRGB": false,
-    "_id": "a676cbf5-5f22-4064-b1ae-89ca2e770aad"
+    "_id": "a676cbf5-5f22-4064-b1ae-89ca2e770aad",
+    "autoReleaseAssets": false
   },
   {
     "__type__": "cc.Node",
@@ -14507,7 +14508,7 @@
       "__uuid__": "c5d8c52a-6321-4418-ac54-650a33f22a5a"
     },
     "bgm06": {
-      "__uuid__": "4252fe5e-494c-4a02-95f5-a4bc035342dc"
+      "__uuid__": "30c8d77d-b508-4243-8cd5-7e51095cd104"
     },
     "e_link": {
       "__uuid__": "67f1b191-0dfd-44a8-b975-c5312bb898e1"

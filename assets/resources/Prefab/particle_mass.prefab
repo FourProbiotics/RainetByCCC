@@ -35,8 +35,8 @@
     "_children": [],
     "_rotationX": 0,
     "_rotationY": 0,
-    "_scaleX": -0.5,
-    "_scaleY": 0.5,
+    "_scaleX": -0.7,
+    "_scaleY": 0.7,
     "_position": {
       "__type__": "cc.Vec2",
       "x": 292,
@@ -48,7 +48,6 @@
     "_globalZOrder": 0,
     "_tag": -1,
     "_opacityModifyRGB": false,
-    "_reorderChildDirty": false,
     "_id": "",
     "_active": true,
     "_components": [
@@ -163,6 +162,7 @@
     "asset": {
       "__uuid__": "afc2b3db-d668-4561-9854-496b5e417d33"
     },
-    "fileId": "3f88f2BLnxFHaaGfZ2ygGI3"
+    "fileId": "3f88f2BLnxFHaaGfZ2ygGI3",
+    "sync": false
   }
 ]

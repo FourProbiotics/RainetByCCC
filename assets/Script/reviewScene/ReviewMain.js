@@ -594,7 +594,7 @@ cc.Class({
                 // 结束演出
                 if(msg.winner == self.UID)
                 {
-                    self.setTips("游戏结束，我方获胜");
+                    self.setTips("游戏结束，"+self.myName+"获胜");
                 }else{
                     self.setTips('游戏结束，'+self.enemyName+'获胜');
                 }
@@ -1031,7 +1031,7 @@ cc.Class({
         let team = group==this.group?this.myTeam:this.enemyTeam;
         var chess = team[c-1].node.getComponent('Chess');
         
-        if(group==this.group || self.checkedUser)
+        if(self.checkedUser)
             chess.setCheckTag(true);
         else{
             chess.changeType(type);
@@ -1044,7 +1044,7 @@ cc.Class({
         let team = group==this.group?this.myTeam:this.enemyTeam;
         var chess = team[c-1].node.getComponent('Chess');
         
-        if(group==this.group || self.checkedUser)
+        if(self.checkedUser)
             chess.setCheckTag(false);
         else{
             chess.changeType('bottom');

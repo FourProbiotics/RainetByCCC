@@ -453,7 +453,7 @@ cc.Class({
                 cc.audioEngine.pauseMusic();
 
                 // 结束演出
-                if(msg.winner == cc.UID)
+                if(msg.winner == self.serverUID)
                 {
                     self.setTips("游戏结束，"+self.myName+"获胜");
                     // 展示胜利演出

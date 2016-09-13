@@ -69,11 +69,11 @@ cc.Class({
         cc.webSocket.onmessage = this.onWSMsg;
         cc.webSocket.onclose = this.onWSClose;
 
-        // 调度计时器每10秒检测一次websocket连接情况
+        // 调度计时器每2秒检测一次websocket连接情况
         self.schedule(function(){
             if (cc.webSocket.readyState !== WebSocket.OPEN)
-                this.sendData({'code':'1000', 'name':'reConnect', data:{}});
-        }, 10);
+                self.sendData({'code':'1000', 'name':'reConnect', data:{}});
+        }, 2);
 
         // 添加场景点击反馈侦听
         let listenerObj = {
@@ -185,7 +185,7 @@ cc.Class({
                         }
                     }else{
                         // 音效
-                        self.playSound('line');
+                        self.playSound('line');cc.log('unsetLB : ', msg.target);
                         // 摘除已装备的超速回线
                         self.setLineBoost(self.group, msg.target, false);
                         // 回合结束
@@ -510,6 +510,10 @@ cc.Class({
                 for(let i in map)
                 {
                     let obj = map[i];
+                    if(self.group == 'B'){
+                        obj.x = 9-obj.x;
+                        obj.y = 9-obj.y;
+                    }
                     //对方棋子
                     if(obj.group === self.enemyGroup){
                         if(obj.no){
@@ -891,7 +895,9 @@ cc.Class({
             else
                 c1Script.setCheckTag(false);
             
-            c1Script.setLineBoost(lbSet1);
+            if(isSwitch){
+                this.setLineBoost(group, c1, lbSet1);
+            }
         }, this);
         func2 = cc.callFunc(()=>{
             c2Script.setSwitchTag(false);
@@ -901,7 +907,9 @@ cc.Class({
             else
                 c2Script.setCheckTag(false);
 
-            c2Script.setLineBoost(lbSet2);
+            if(isSwitch){
+                this.setLineBoost(group, c2, lbSet2);
+            }
         }, this);
 
         if(isSwitch){

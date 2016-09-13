@@ -48,7 +48,6 @@
     "_globalZOrder": 0,
     "_tag": -1,
     "_opacityModifyRGB": false,
-    "_reorderChildDirty": false,
     "_id": "",
     "_active": true,
     "_components": [
@@ -102,15 +101,24 @@
     "_enabled": true,
     "group": "G",
     "type": "bottom",
+    "grpNum": 0,
     "posX": 1,
     "posY": 8,
     "hasLineBoost": false,
     "hasLocked": false,
+    "isSwitching": false,
+    "checked": false,
     "lockOn": {
       "__uuid__": "b299cfa3-00dc-4972-b1f5-38837b6e0f68"
     },
+    "switchTag": {
+      "__uuid__": "42f0ecdc-5c91-49c1-9f2b-1e9b789a96ae"
+    },
     "lineBoost": {
       "__uuid__": "3906b70f-94b2-46b5-8820-b709a24ecb71"
+    },
+    "checkTag": {
+      "__uuid__": "a3a4c8a8-2825-468f-b54a-bfae5f339746"
     }
   },
   {
@@ -118,7 +126,10 @@
     "root": {
       "__id__": 1
     },
-    "asset": null,
-    "fileId": "79bbbY2ObxHJpC9ItZJCNSS"
+    "asset": {
+      "__uuid__": "d5a23ec2-c7d7-4a98-a49d-5f81d619d967"
+    },
+    "fileId": "79bbbY2ObxHJpC9ItZJCNSS",
+    "sync": false
   }
 ]

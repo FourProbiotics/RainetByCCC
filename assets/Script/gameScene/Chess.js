@@ -97,9 +97,9 @@ var Chess = cc.Class({
             return;
         this.type = type;
         let typeName = this.group + type;
-        let rotate1 = cc.scaleTo(0.2, 0, 1);
+        let rotate1 = cc.scaleTo(0.1, 0, 1);
         let call = ()=>{this.spriteComponent.spriteFrame = cc.Tex1.getSpriteFrame(typeName);};
-        let rotate2 = cc.scaleTo(0.2, 1, 1);
+        let rotate2 = cc.scaleTo(0.1, 1, 1);
         let seq = cc.sequence(rotate1, cc.callFunc(call), rotate2);
 
         this.node.runAction(seq);

@@ -900,12 +900,12 @@ cc.Class({
     sendData: function(cmd){
 
         // 若连接中断则重连后再发送消息
-        if (cc.webSocket.readyState !== WebSocket.OPEN) {
+        if (!cc.webSocket || !(cc.webSocket instanceof WebSocket) || cc.webSocket.readyState !== WebSocket.OPEN) {
             cc.webSocket.close();
             this.initWebSocket();
             setTimeout(function() {
                 self.sendData(cmd);
-            }, 500);
+            }, 1500);
         } else {
             if(this.reConnect)
             {

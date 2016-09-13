@@ -71,16 +71,27 @@ cc.Class({
 
         // 调度计时器每2秒检测一次websocket连接情况
         self.schedule(function(){
-            if (cc.webSocket.readyState !== WebSocket.OPEN)
+            if (!cc.webSocket || !(cc.webSocket instanceof WebSocket) || cc.webSocket.readyState !== WebSocket.OPEN)
                 self.sendData({'code':'1000', 'name':'reConnect', data:{}});
-        }, 2);
+        }, 5);
 
+        // 吞噬标签
+        this.swallowTag = false;
         // 添加场景点击反馈侦听
         let listenerObj = {
             event: cc.EventListener.TOUCH_ONE_BY_ONE,
             onTouchBegan: function (touch, event) {
                 let pos = self.node.convertToNodeSpaceAR(touch.getLocation());
                 self.showEffect('click'+self.group, pos.x, pos.y);
+
+                // 吞噬标签为true则吞没事件,否则开启吞噬标签并计时恢复
+                if(self.swallowTag)
+                    event.stopPropagation();
+                else{
+                    self.swallowTag = true;
+                    self.schedule(function(){ self.swallowTag = false; }, 0.5);
+                }
+
                 return true; /*这里必须要写 return true*/
             },
 
@@ -1073,7 +1084,7 @@ cc.Class({
     sendData: function(cmd){
 
         // 若连接中断则重连后再发送消息
-        if (cc.webSocket.readyState !== WebSocket.OPEN) {
+        if (!cc.webSocket || !(cc.webSocket instanceof WebSocket) || cc.webSocket.readyState !== WebSocket.OPEN) {
             // 记录当前待发送信息
             this.toSendData = cmd;
             // 断开重连
@@ -1081,7 +1092,7 @@ cc.Class({
             this.initWebSocket();
             setTimeout(function() {
                 self.sendData(cmd);
-            }, 500);
+            }, 1500);
         } else {
             if(this.reConnect)
             {
@@ -1242,10 +1253,8 @@ cc.Class({
     initWebSocket: function() {
         cc.log('重新连接服务器');
         this.reConnect = true;
-        if (cc.webSocket) {
-            cc.webSocket = new WebSocket(SOCKET_ADDRESS);
-            cc.webSocket.onmessage = this.onWSMsg;
-        }
+        cc.webSocket = new WebSocket(SOCKET_ADDRESS);
+        cc.webSocket.onmessage = this.onWSMsg;
     },
 
     // 回合结束时处理所有侦听

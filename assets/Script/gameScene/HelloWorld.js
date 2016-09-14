@@ -89,7 +89,7 @@ cc.Class({
                     event.stopPropagation();
                 else{
                     self.swallowTag = true;
-                    self.schedule(function(){ self.swallowTag = false; }, 0.5);
+                    self.scheduleOnce(function(){ self.swallowTag = false; }, 0.5);
                 }
 
                 return true; /*这里必须要写 return true*/

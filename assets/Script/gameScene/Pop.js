@@ -23,6 +23,30 @@ cc.Class({
         this.popYes.targetOff(this);
         this.popNo.targetOff(this);
         switch(type){
+            case 'loginFailed':
+                this.label.string = '登录失败！请检查用户名密码';
+                this.yesLabel.string = '确定';
+                this.noLabel.string = '取消';
+                this.popYes.on(cc.Node.EventType.TOUCH_END, this.onCloseNo, this);
+                this.popNo.on(cc.Node.EventType.TOUCH_END, this.onCloseNo, this);
+            break;
+
+            case 'registerFailed':
+                this.label.string = '注册失败！用户名不符合规范或用户名已存在';
+                this.yesLabel.string = '确定';
+                this.noLabel.string = '取消';
+                this.popYes.on(cc.Node.EventType.TOUCH_END, this.onCloseNo, this);
+                this.popNo.on(cc.Node.EventType.TOUCH_END, this.onCloseNo, this);
+            break;
+
+            case 'hotUpdate':
+                this.label.string = '发现新版本，要现在更新吗？';
+                this.yesLabel.string = '确定';
+                this.noLabel.string = '取消';
+                this.popYes.on(cc.Node.EventType.TOUCH_END, this.onUpdateYes, this);
+                this.popNo.on(cc.Node.EventType.TOUCH_END, this.onCloseNo, this);
+            break;
+
             case 'close':
                 this.label.string = '确定认输并退出游戏吗？';
                 this.yesLabel.string = '确定';
@@ -122,5 +146,11 @@ cc.Class({
     switchToStartScene: function(){
         cc.audioEngine.stopMusic();
         cc.director.loadScene('startScene');
+    },
+
+    // 热更回调
+    onUpdateYes: function(){
+        let asset = cc.find('Canvas').getComponent('HotUpdate');
+        asset.hotUpdate();
     }
 });
